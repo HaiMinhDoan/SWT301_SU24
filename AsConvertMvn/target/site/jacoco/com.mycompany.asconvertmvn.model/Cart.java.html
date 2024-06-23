@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cart.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AsConvertMvn-1.0-SNAPSHOT</a> &gt; <a href="index.source.html" class="el_package">com.mycompany.asconvertmvn.model</a> &gt; <span class="el_source">Cart.java</span></div><h1>Cart.java</h1><pre class="source lang-java linenums">/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.asconvertmvn.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author tranm
+ */
+public class Cart {
+
+    private List&lt;Item&gt; items;
+    private int cartId;
+    private int customerId;
+
+<span class="nc" id="L20">    public Cart() {</span>
+<span class="nc" id="L21">        items = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L22">    }</span>
+
+<span class="nc" id="L24">    public Cart(List&lt;Item&gt; items) {</span>
+<span class="nc" id="L25">        this.items = items;</span>
+<span class="nc" id="L26">    }</span>
+
+<span class="nc" id="L28">    public Cart(int cartId, int customerId) {</span>
+<span class="nc" id="L29">        this.cartId = cartId;</span>
+<span class="nc" id="L30">        this.customerId = customerId;</span>
+<span class="nc" id="L31">        items = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L32">    }</span>
+
+    public int getCartId() {
+<span class="nc" id="L35">        return cartId;</span>
+    }
+
+    public void setCartId(int cartId) {
+<span class="nc" id="L39">        this.cartId = cartId;</span>
+<span class="nc" id="L40">    }</span>
+
+    public int getCustomerId() {
+<span class="nc" id="L43">        return customerId;</span>
+    }
+
+    public void setCustomerId(int customerId) {
+<span class="nc" id="L47">        this.customerId = customerId;</span>
+<span class="nc" id="L48">    }</span>
+
+    public List&lt;Item&gt; getItems() {
+<span class="nc" id="L51">        return items;</span>
+    }
+
+    public Item getItemById(int id) {
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        for (Item item : items) {</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">            if (item.getProduct().getProductId() == id) {</span>
+<span class="nc" id="L57">                return item;</span>
+            }
+<span class="nc" id="L59">        }</span>
+
+<span class="nc" id="L61">        return null;</span>
+    }
+
+    public int getQuantityById(int id) {
+<span class="nc" id="L65">        Item item = getItemById(id);</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (item != null) {</span>
+<span class="nc" id="L67">            return item.getQuantity();</span>
+        } else {
+<span class="nc" id="L69">            return 0; // Or handle the case where the item is not found in the cart</span>
+        }
+    }
+
+    public void addItem(Item t) {
+        //Exist item in cart 
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (getItemById(t.getProduct().getProductId()) != null) {</span>
+<span class="nc" id="L76">            Item i = getItemById(t.getProduct().getProductId());</span>
+<span class="nc" id="L77">            i.setQuantity(i.getQuantity() + t.getQuantity());</span>
+<span class="nc" id="L78">        } else {</span>
+            //not exist in cart
+//            t.setPrice(t.getProduct().getNewPrice());
+<span class="nc" id="L81">            items.add(t);</span>
+        }
+<span class="nc" id="L83">    }</span>
+
+    public void removeItem(int id) {
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (getItemById(id) != null) {</span>
+<span class="nc" id="L87">            items.remove(getItemById(id));</span>
+        }
+<span class="nc" id="L89">    }</span>
+
+    public int getTotalMoney() {
+<span class="nc" id="L92">        int total = 0;</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        for (Item item : items) {</span>
+<span class="nc" id="L94">            total += item.getQuantity() * item.getPrice();</span>
+<span class="nc" id="L95">        }</span>
+<span class="nc" id="L96">        return total;</span>
+    }
+
+    public int getTotalMoneyDB() {
+<span class="nc" id="L100">        int total = 0;</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        for (Item item : items) {</span>
+<span class="nc" id="L102">            total += item.getPrice();</span>
+<span class="nc" id="L103">        }</span>
+<span class="nc" id="L104">        return total;</span>
+    }
+
+    private Product getProductById(int id, List&lt;Product&gt; list) {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (Product product : list) {</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (product.getProductId() == id) {</span>
+<span class="nc" id="L110">                return product;</span>
+            }
+<span class="nc" id="L112">        }</span>
+
+<span class="nc" id="L114">        return null;</span>
+    }
+
+<span class="nc" id="L117">    public Cart(String txt, List&lt;Product&gt; list) {</span>
+<span class="nc" id="L118">        items = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="nc bnc" id="L120" title="All 4 branches missed.">            if (txt != null &amp;&amp; txt.length() != 0) {</span>
+<span class="nc" id="L121">                String[] s = txt.split(&quot;\\.&quot;);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                for (String i : s) {</span>
+<span class="nc" id="L123">                    String[] n = i.split(&quot;:&quot;);</span>
+<span class="nc" id="L124">                    int id = Integer.parseInt(n[0]);</span>
+<span class="nc" id="L125">                    int quantity = Integer.parseInt(n[1]);</span>
+<span class="nc" id="L126">                    Product p = getProductById(id, list);</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                    if (p != null) {</span>
+<span class="nc" id="L128">                        Item t = new Item();</span>
+<span class="nc" id="L129">                        t.setProduct(p);</span>
+<span class="nc" id="L130">                        t.setQuantity(quantity);</span>
+<span class="nc" id="L131">                        t.setPrice(p.getNewPrice());</span>
+<span class="nc" id="L132">                        addItem(t);</span>
+                    }
+                }
+            }
+<span class="nc" id="L136">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L137">        }</span>
+<span class="nc" id="L138">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L142">        return &quot;Cart{&quot; + &quot;items=&quot; + items + &quot;, cartId=&quot; + cartId + &quot;, customerId=&quot; + customerId + '}';</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
