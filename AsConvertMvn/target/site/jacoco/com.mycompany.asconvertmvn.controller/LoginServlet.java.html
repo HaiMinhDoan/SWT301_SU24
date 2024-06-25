@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AsConvertMvn-1.0-SNAPSHOT</a> &gt; <a href="index.source.html" class="el_package">com.mycompany.asconvertmvn.controller</a> &gt; <span class="el_source">LoginServlet.java</span></div><h1>LoginServlet.java</h1><pre class="source lang-java linenums">/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
+package com.mycompany.asconvertmvn.controller;
+
+import com.mycompany.asconvertmvn.dal.AccountDAO;
+import com.mycompany.asconvertmvn.model.Account;
+import java.io.IOException;
+import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+/**
+ *
+ * @author tranm
+ */
+<span class="nc" id="L21">public class LoginServlet extends HttpServlet {</span>
+
+    /**
+     * Processes requests for both HTTP &lt;code&gt;GET&lt;/code&gt; and &lt;code&gt;POST&lt;/code&gt;
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L34">        response.setContentType(&quot;text/html;charset=UTF-8&quot;);</span>
+<span class="nc" id="L35">        try (PrintWriter out = response.getWriter()) {</span>
+            /* TODO output your page here. You may use following sample code. */
+<span class="nc" id="L37">            out.println(&quot;&lt;!DOCTYPE html&gt;&quot;);</span>
+<span class="nc" id="L38">            out.println(&quot;&lt;html&gt;&quot;);</span>
+<span class="nc" id="L39">            out.println(&quot;&lt;head&gt;&quot;);</span>
+<span class="nc" id="L40">            out.println(&quot;&lt;title&gt;Servlet LoginServlet&lt;/title&gt;&quot;);</span>
+<span class="nc" id="L41">            out.println(&quot;&lt;/head&gt;&quot;);</span>
+<span class="nc" id="L42">            out.println(&quot;&lt;body&gt;&quot;);</span>
+<span class="nc" id="L43">            out.println(&quot;&lt;h1&gt;Servlet LoginServlet at &quot; + request.getContextPath() + &quot;&lt;/h1&gt;&quot;);</span>
+<span class="nc" id="L44">            out.println(&quot;&lt;/body&gt;&quot;);</span>
+<span class="nc" id="L45">            out.println(&quot;&lt;/html&gt;&quot;);</span>
+        }
+<span class="nc" id="L47">    }</span>
+
+    // &lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;HttpServlet methods. Click on the + sign on the left to edit the code.&quot;&gt;
+    /**
+     * Handles the HTTP &lt;code&gt;GET&lt;/code&gt; method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L61">        request.getRequestDispatcher(&quot;view/login.jsp&quot;).forward(request, response);</span>
+
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Handles the HTTP &lt;code&gt;POST&lt;/code&gt; method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L76">        String user = request.getParameter(&quot;username&quot;);</span>
+<span class="nc" id="L77">        String password = request.getParameter(&quot;password&quot;);</span>
+
+<span class="nc" id="L79">        Account a = AccountDAO.INSTANCE.checkAccount(user, password);</span>
+<span class="nc" id="L80">        HttpSession session = request.getSession();</span>
+
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (a == null) {</span>
+<span class="nc" id="L83">            request.setAttribute(&quot;error&quot;, &quot;Tài khoản hoặc mật khẩu không đúng&quot;);</span>
+<span class="nc" id="L84">            request.setAttribute(&quot;user&quot;, user);</span>
+<span class="nc" id="L85">            request.setAttribute(&quot;password&quot;, password);</span>
+
+<span class="nc" id="L87">            request.getRequestDispatcher(&quot;view/login.jsp&quot;).forward(request, response);</span>
+        } else {
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            if (a.getRole() == 0) {</span>
+<span class="nc" id="L90">                session.setAttribute(&quot;account&quot;, a);</span>
+<span class="nc" id="L91">                response.sendRedirect(&quot;adminHome&quot;);</span>
+            } else {
+
+<span class="nc" id="L94">                session.setAttribute(&quot;account&quot;, a);</span>
+<span class="nc" id="L95">                response.sendRedirect(&quot;home&quot;);</span>
+
+            }
+
+        }
+
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+<span class="nc" id="L110">        return &quot;Short description&quot;;</span>
+    }// &lt;/editor-fold&gt;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

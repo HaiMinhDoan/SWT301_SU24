@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PayServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AsConvertMvn-1.0-SNAPSHOT</a> &gt; <a href="index.source.html" class="el_package">com.mycompany.asconvertmvn.controller</a> &gt; <span class="el_source">PayServlet.java</span></div><h1>PayServlet.java</h1><pre class="source lang-java linenums">/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
+package com.mycompany.asconvertmvn.controller;
+
+
+import com.mycompany.asconvertmvn.dal.CartDAO;
+import com.mycompany.asconvertmvn.dal.CustomerDAO;
+import com.mycompany.asconvertmvn.dal.OrderDAO;
+import com.mycompany.asconvertmvn.dal.ProductDAO;
+import com.mycompany.asconvertmvn.model.Account;
+import com.mycompany.asconvertmvn.model.Cart;
+import com.mycompany.asconvertmvn.model.Customer;
+import com.mycompany.asconvertmvn.model.Item;
+import com.mycompany.asconvertmvn.model.Product;
+import java.io.IOException;
+import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
+
+/**
+ *
+ * @author tranm
+ */
+<span class="nc" id="L31">public class PayServlet extends HttpServlet {</span>
+
+    /**
+     * Processes requests for both HTTP &lt;code&gt;GET&lt;/code&gt; and &lt;code&gt;POST&lt;/code&gt;
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L44">        response.setContentType(&quot;text/html;charset=UTF-8&quot;);</span>
+<span class="nc" id="L45">        try (PrintWriter out = response.getWriter()) {</span>
+            /* TODO output your page here. You may use following sample code. */
+<span class="nc" id="L47">            out.println(&quot;&lt;!DOCTYPE html&gt;&quot;);</span>
+<span class="nc" id="L48">            out.println(&quot;&lt;html&gt;&quot;);</span>
+<span class="nc" id="L49">            out.println(&quot;&lt;head&gt;&quot;);</span>
+<span class="nc" id="L50">            out.println(&quot;&lt;title&gt;Servlet PayServlet&lt;/title&gt;&quot;);</span>
+<span class="nc" id="L51">            out.println(&quot;&lt;/head&gt;&quot;);</span>
+<span class="nc" id="L52">            out.println(&quot;&lt;body&gt;&quot;);</span>
+<span class="nc" id="L53">            out.println(&quot;&lt;h1&gt;Servlet PayServlet at &quot; + request.getContextPath() + &quot;&lt;/h1&gt;&quot;);</span>
+<span class="nc" id="L54">            out.println(&quot;&lt;/body&gt;&quot;);</span>
+<span class="nc" id="L55">            out.println(&quot;&lt;/html&gt;&quot;);</span>
+        }
+<span class="nc" id="L57">    }</span>
+
+    // &lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;HttpServlet methods. Click on the + sign on the left to edit the code.&quot;&gt;
+    /**
+     * Handles the HTTP &lt;code&gt;GET&lt;/code&gt; method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L71">        processRequest(request, response);</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Handles the HTTP &lt;code&gt;POST&lt;/code&gt; method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+<span class="nc" id="L87">        HttpSession session = request.getSession();</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (session.getAttribute(&quot;account&quot;) == null) {</span>
+<span class="nc" id="L89">            List&lt;Product&gt; list = ProductDAO.INSTANCE.getAllProduct();</span>
+<span class="nc" id="L90">            Cookie[] arr = request.getCookies();</span>
+<span class="nc" id="L91">            String cok = &quot;&quot;;</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if (arr != null) {</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                for (Cookie o : arr) {</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                    if (o.getName().equals(&quot;cart&quot;)) {</span>
+<span class="nc" id="L95">                        cok += o.getValue();</span>
+                    }
+                }
+            }
+<span class="nc" id="L99">            Cart cart = new Cart(cok, list);</span>
+<span class="nc" id="L100">            String firstName = request.getParameter(&quot;firstName&quot;);</span>
+<span class="nc" id="L101">            String lastName = request.getParameter(&quot;lastName&quot;);</span>
+<span class="nc" id="L102">            String email = request.getParameter(&quot;email&quot;);</span>
+<span class="nc" id="L103">            String phone = request.getParameter(&quot;phone&quot;);</span>
+<span class="nc" id="L104">            String address = request.getParameter(&quot;address&quot;);</span>
+<span class="nc" id="L105">            String gender = request.getParameter(&quot;gender&quot;);</span>
+<span class="nc" id="L106">            Customer c = new Customer();</span>
+<span class="nc" id="L107">            c.setFirstName(firstName);</span>
+<span class="nc" id="L108">            c.setLastName(lastName);</span>
+<span class="nc" id="L109">            c.setEmail(email);</span>
+<span class="nc" id="L110">            c.setAddress(address);</span>
+<span class="nc" id="L111">            c.setPhone(phone);</span>
+<span class="nc" id="L112">            c.setGender(gender);</span>
+<span class="nc" id="L113">            int cusId = CustomerDAO.INSTANCE.insertCustomer(c);</span>
+<span class="nc" id="L114">            OrderDAO.INSTANCE.addOrderByCusId(cusId, cart);</span>
+<span class="nc" id="L115">            Cookie cookie = new Cookie(&quot;cart&quot;, &quot;&quot;);</span>
+<span class="nc" id="L116">            cookie.setMaxAge(0);</span>
+<span class="nc" id="L117">            response.addCookie(cookie);</span>
+<span class="nc" id="L118">            session.setAttribute(&quot;paymentSuccess&quot;, true);</span>
+            // Chuyển hướng đến trang chính
+<span class="nc" id="L120">            response.sendRedirect(&quot;home&quot;);</span>
+<span class="nc" id="L121">        } else {</span>
+<span class="nc" id="L122">            Account account = (Account) session.getAttribute(&quot;account&quot;);</span>
+<span class="nc" id="L123">            Customer customer = CustomerDAO.INSTANCE.getCustomerById(account.getCustomerId());</span>
+            // Thêm đơn hàng
+<span class="nc" id="L125">            List&lt;Item&gt; listItems = CartDAO.INSTANCE.getAllItem();</span>
+<span class="nc" id="L126">            List&lt;Cart&gt; listCarts = CartDAO.INSTANCE.getAllCart();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            for (Cart cart : listCarts) {</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                for (Item item : listItems) {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                    if (item.getCartId() == cart.getCartId()) {</span>
+<span class="nc" id="L130">                        cart.addItem(item);</span>
+                    }
+<span class="nc" id="L132">                }</span>
+<span class="nc" id="L133">            }</span>
+
+<span class="nc" id="L135">            Cart cart = new Cart();</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">            for (Cart cart1 : listCarts) {</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">                if (cart1.getCustomerId() == customer.getCustomerId()) {</span>
+<span class="nc" id="L138">                    cart = cart1;</span>
+                }
+<span class="nc" id="L140">            }</span>
+            
+<span class="nc" id="L142">            OrderDAO.INSTANCE.addOrder(customer, cart);</span>
+<span class="nc" id="L143">            CartDAO.INSTANCE.deleteAllItemByCartId(cart.getCartId());</span>
+<span class="nc" id="L144">            session.setAttribute(&quot;paymentSuccess&quot;, true);</span>
+           
+<span class="nc" id="L146">            response.sendRedirect(&quot;home&quot;);</span>
+        }
+
+
+<span class="nc" id="L150">    }</span>
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+<span class="nc" id="L159">        return &quot;Short description&quot;;</span>
+    }// &lt;/editor-fold&gt;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
