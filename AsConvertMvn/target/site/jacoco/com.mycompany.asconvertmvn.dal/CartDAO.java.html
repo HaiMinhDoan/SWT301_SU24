@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CartDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AsConvertMvn-1.0-SNAPSHOT</a> &gt; <a href="index.source.html" class="el_package">com.mycompany.asconvertmvn.dal</a> &gt; <span class="el_source">CartDAO.java</span></div><h1>CartDAO.java</h1><pre class="source lang-java linenums">/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.asconvertmvn.dal;
+
+import com.mycompany.asconvertmvn.model.Cart;
+import com.mycompany.asconvertmvn.model.Item;
+import com.mycompany.asconvertmvn.model.Product;
+import java.sql.Connection;
+import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author tranm
+ */
+public class CartDAO {
+
+<span class="nc" id="L25">    private static final Logger logger = Logger.getLogger(CartDAO.class.getName());</span>
+
+<span class="nc" id="L27">    public static final CartDAO INSTANCE = new CartDAO();</span>
+    private Connection con;
+
+<span class="nc" id="L30">    public CartDAO() {</span>
+
+<span class="nc" id="L32">        con = new DBContext().connection;</span>
+
+<span class="nc" id="L34">    }</span>
+
+    public void insertCart(int customerId) {
+<span class="nc" id="L37">        String sql = &quot;Insert into Cart(CustomerID) values(?)&quot;;</span>
+<span class="nc" id="L38">        PreparedStatement ps = null;</span>
+        try {
+<span class="nc" id="L40">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L41">            ps.setInt(1, customerId);</span>
+<span class="nc" id="L42">            ps.executeUpdate();</span>
+<span class="nc" id="L43">        } catch (SQLException e) {</span>
+<span class="nc" id="L44">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L49">                    ps.close();</span>
+                }
+<span class="nc" id="L51">            } catch (SQLException e) {</span>
+<span class="nc" id="L52">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L53">            }</span>
+
+        }
+
+<span class="nc" id="L57">    }</span>
+
+    public Cart getCartByCusId(int customerId) {
+<span class="nc" id="L60">        String sql = &quot;select * from Cart where CustomerID = ?&quot;;</span>
+<span class="nc" id="L61">        PreparedStatement ps = null;</span>
+        try {
+<span class="nc" id="L63">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L64">            ps.setInt(1, customerId);</span>
+<span class="nc" id="L65">            ResultSet rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L67">                Cart cart = new Cart(rs.getInt(&quot;CartId&quot;), rs.getInt(&quot;CustomerID&quot;));</span>
+<span class="nc" id="L68">                return cart;</span>
+            }
+<span class="nc" id="L70">        } catch (SQLException e) {</span>
+<span class="nc" id="L71">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L76">                    ps.close();</span>
+                }
+<span class="nc" id="L78">            } catch (SQLException e) {</span>
+<span class="nc" id="L79">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L80">            }</span>
+
+        }
+
+<span class="nc" id="L84">        return null;</span>
+    }
+
+    public Cart getCartById(int id) {
+<span class="nc" id="L88">        String sql = &quot;select * from Cart where CartId = ?&quot;;</span>
+<span class="nc" id="L89">        PreparedStatement ps = null;</span>
+<span class="nc" id="L90">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L92">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L93">            ps.setInt(1, id);</span>
+<span class="nc" id="L94">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L96">                Cart cart = new Cart(rs.getInt(&quot;CartId&quot;), rs.getInt(&quot;CustomerID&quot;));</span>
+<span class="nc" id="L97">                return cart;</span>
+            }
+<span class="nc" id="L99">        } catch (SQLException e) {</span>
+<span class="nc" id="L100">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L105">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L108">                    ps.close();</span>
+                }
+<span class="nc" id="L110">            } catch (SQLException e) {</span>
+<span class="nc" id="L111">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L112">            }</span>
+
+        }
+
+<span class="nc" id="L116">        return null;</span>
+    }
+
+    public List&lt;Cart&gt; getAllCart() {
+<span class="nc" id="L120">        List&lt;Cart&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L121">        String sql = &quot;select * from Cart&quot;;</span>
+<span class="nc" id="L122">        PreparedStatement ps = null;</span>
+<span class="nc" id="L123">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L125">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L126">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L128">                Cart cart = new Cart(rs.getInt(&quot;CartId&quot;), rs.getInt(&quot;CustomerID&quot;));</span>
+<span class="nc" id="L129">                list.add(cart);</span>
+<span class="nc" id="L130">            }</span>
+<span class="nc" id="L131">        } catch (SQLException e) {</span>
+<span class="nc" id="L132">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L137">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L140">                    ps.close();</span>
+                }
+<span class="nc" id="L142">            } catch (SQLException e) {</span>
+<span class="nc" id="L143">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L144">            }</span>
+
+        }
+
+<span class="nc" id="L148">        return list;</span>
+    }
+
+    public List&lt;Item&gt; getAllItem() {
+<span class="nc" id="L152">        List&lt;Item&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L153">        String sql = &quot;select * from CartItem c join Product p ON c.ProductID = p.ProductID&quot;;</span>
+<span class="nc" id="L154">        PreparedStatement ps = null;</span>
+<span class="nc" id="L155">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L157">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L158">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L160">                Item i = new Item();</span>
+<span class="nc" id="L161">                i.setCartId(rs.getInt(&quot;CartId&quot;));</span>
+<span class="nc" id="L162">                i.setPrice(rs.getDouble(&quot;Price&quot;));</span>
+<span class="nc" id="L163">                i.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="nc" id="L164">                Product p = new Product();</span>
+<span class="nc" id="L165">                p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
+<span class="nc" id="L166">                p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
+<span class="nc" id="L167">                p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="nc" id="L168">                p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
+<span class="nc" id="L169">                p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
+<span class="nc" id="L170">                p.setImg(rs.getString(&quot;Image&quot;));</span>
+<span class="nc" id="L171">                p.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="nc" id="L172">                i.setProduct(p);</span>
+<span class="nc" id="L173">                list.add(i);</span>
+
+<span class="nc" id="L175">            }</span>
+<span class="nc" id="L176">        } catch (SQLException e) {</span>
+<span class="nc" id="L177">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L182">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L185">                    ps.close();</span>
+                }
+<span class="nc" id="L187">            } catch (SQLException e) {</span>
+<span class="nc" id="L188">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L189">            }</span>
+
+        }
+
+<span class="nc" id="L193">        return list;</span>
+    }
+
+    public int getQuantityItem(int productId) {
+<span class="nc" id="L197">        String sql = &quot;select Quantity from CartItem where ProductID = ?&quot;;</span>
+<span class="nc" id="L198">        int result = 0;</span>
+<span class="nc" id="L199">        PreparedStatement ps = null;</span>
+<span class="nc" id="L200">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L202">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L203">            ps.setInt(1, productId);</span>
+<span class="nc" id="L204">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L206">                result = rs.getInt(&quot;Quantity&quot;);</span>
+            }
+<span class="nc" id="L208">        } catch (Exception e) {</span>
+<span class="nc" id="L209">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L214">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L216" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L217">                    ps.close();</span>
+                }
+<span class="nc" id="L219">            } catch (SQLException e) {</span>
+<span class="nc" id="L220">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L221">            }</span>
+
+        }
+
+<span class="nc" id="L225">        return result;</span>
+    }
+
+    public void addItemsToCart(List&lt;Item&gt; items, Cart cart) {
+<span class="nc" id="L229">        String sql = &quot;MERGE INTO CartItem AS target USING (VALUES (?, ?, ?, ?)) AS source (CartId, ProductID, Quantity, Price) ON target.CartId = source.CartId AND target.ProductID = source.ProductID\n&quot;</span>
+                + &quot;WHEN MATCHED THEN UPDATE SET target.Quantity = target.Quantity + source.Quantity, target.Price = target.Price + (source.Quantity * source.Price)\n&quot;
+                + &quot;WHEN NOT MATCHED THEN INSERT (CartId, ProductID, Quantity, Price) VALUES (source.CartId, source.ProductID, source.Quantity, source.Price);&quot;;
+<span class="nc" id="L232">        PreparedStatement ps = null;</span>
+        try {
+<span class="nc" id="L234">            ps = con.prepareStatement(sql);</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">            for (Item item : items) {</span>
+<span class="nc" id="L236">                ps.setInt(1, cart.getCartId());</span>
+<span class="nc" id="L237">                ps.setInt(2, item.getProduct().getProductId());</span>
+<span class="nc" id="L238">                ps.setInt(3, item.getQuantity());</span>
+<span class="nc" id="L239">                ps.setDouble(4, item.getPrice());</span>
+<span class="nc" id="L240">                ps.executeUpdate();</span>
+<span class="nc" id="L241">            }</span>
+<span class="nc" id="L242">        } catch (SQLException e) {</span>
+<span class="nc" id="L243">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+
+<span class="nc bnc" id="L248" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L249">                    ps.close();</span>
+                }
+<span class="nc" id="L251">            } catch (SQLException e) {</span>
+<span class="nc" id="L252">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L253">            }</span>
+
+        }
+
+<span class="nc" id="L257">    }</span>
+
+    public void deleteItemById(int productId, int cartId) {
+<span class="nc" id="L260">        String sql1 = &quot;UPDATE CartItem SET Quantity = Quantity - 1 WHERE CartId = ? AND ProductID = ?&quot;;</span>
+        try {
+<span class="nc" id="L262">            PreparedStatement ps1 = con.prepareStatement(sql1);</span>
+<span class="nc" id="L263">            ps1.setInt(1, cartId);</span>
+<span class="nc" id="L264">            ps1.setInt(2, productId);</span>
+<span class="nc" id="L265">            ps1.executeUpdate();</span>
+<span class="nc" id="L266">            String sql2 = &quot;DELETE FROM CartItem\n&quot;</span>
+                    + &quot;WHERE CartId = ? AND ProductID = ? AND Quantity = 0;&quot;;
+<span class="nc" id="L268">            PreparedStatement ps2 = con.prepareStatement(sql2);</span>
+<span class="nc" id="L269">            ps2.setInt(1, cartId);</span>
+<span class="nc" id="L270">            ps2.setInt(2, productId);</span>
+<span class="nc" id="L271">            ps2.executeUpdate();</span>
+
+<span class="nc" id="L273">        } catch (SQLException e) {</span>
+<span class="nc" id="L274">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+<span class="nc" id="L276">        }</span>
+
+<span class="nc" id="L278">    }</span>
+
+    public void deleteItemByProId(int productId) {
+<span class="nc" id="L281">        String sql1 = &quot;Delete CartItem Where ProductID = ?&quot;;</span>
+<span class="nc" id="L282">        PreparedStatement ps1 = null;</span>
+
+        try {
+<span class="nc" id="L285">            ps1 = con.prepareStatement(sql1);</span>
+<span class="nc" id="L286">            ps1.setInt(1, productId);</span>
+<span class="nc" id="L287">            ps1.executeUpdate();</span>
+
+<span class="nc" id="L289">        } catch (SQLException e) {</span>
+<span class="nc" id="L290">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+
+<span class="nc bnc" id="L295" title="All 2 branches missed.">                if (ps1 != null) {</span>
+<span class="nc" id="L296">                    ps1.close();</span>
+                }
+<span class="nc" id="L298">            } catch (SQLException e) {</span>
+<span class="nc" id="L299">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L300">            }</span>
+
+        }
+
+<span class="nc" id="L304">    }</span>
+
+    public void updateItemByProId(int productId, int quantity) {
+<span class="nc" id="L307">        String sql1 = &quot;Update CartItem set Quantity = ? Where ProductID = ?&quot;;</span>
+<span class="nc" id="L308">        PreparedStatement ps1 = null;</span>
+
+        try {
+<span class="nc" id="L311">            ps1 = con.prepareStatement(sql1);</span>
+<span class="nc" id="L312">            ps1.setInt(1, quantity);</span>
+<span class="nc" id="L313">            ps1.setInt(2, productId);</span>
+<span class="nc" id="L314">            ps1.executeUpdate();</span>
+
+<span class="nc" id="L316">        } catch (SQLException e) {</span>
+<span class="nc" id="L317">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L321" title="All 2 branches missed.">                if (ps1 != null) {</span>
+<span class="nc" id="L322">                    ps1.close();</span>
+                }
+<span class="nc" id="L324">            } catch (SQLException e) {</span>
+<span class="nc" id="L325">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L326">            }</span>
+
+        }
+
+<span class="nc" id="L330">    }</span>
+
+    public void deleteAllItemByProId(int productId) {
+<span class="nc" id="L333">        String sql = &quot;DELETE  FROM CartItem WHERE ProductID = ?&quot;;</span>
+<span class="nc" id="L334">        PreparedStatement ps = null;</span>
+        try {
+<span class="nc" id="L336">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L337">            ps.setInt(1, productId);</span>
+<span class="nc" id="L338">            ps.executeUpdate();</span>
+<span class="nc" id="L339">        } catch (SQLException e) {</span>
+<span class="nc" id="L340">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+
+<span class="nc bnc" id="L345" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L346">                    ps.close();</span>
+                }
+<span class="nc" id="L348">            } catch (SQLException e) {</span>
+<span class="nc" id="L349">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L350">            }</span>
+
+        }
+
+<span class="nc" id="L354">    }</span>
+
+    public void deleteAllItemByCartId(int cartId) {
+<span class="nc" id="L357">        String sql = &quot;DELETE  FROM CartItem WHERE CartId = ?&quot;;</span>
+<span class="nc" id="L358">        PreparedStatement ps = null;</span>
+        try {
+<span class="nc" id="L360">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L361">            ps.setInt(1, cartId);</span>
+<span class="nc" id="L362">            ps.executeUpdate();</span>
+<span class="nc" id="L363">        } catch (SQLException e) {</span>
+<span class="nc" id="L364">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+
+<span class="nc bnc" id="L369" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L370">                    ps.close();</span>
+                }
+<span class="nc" id="L372">            } catch (SQLException e) {</span>
+<span class="nc" id="L373">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L374">            }</span>
+
+        }
+
+<span class="nc" id="L378">    }</span>
+
+    public void deleteAllItemByCusId(int customerId) {
+<span class="nc" id="L381">        String sql = &quot;DELETE  FROM Cart WHERE CustomerID = ?&quot;;</span>
+<span class="nc" id="L382">        PreparedStatement ps = null;</span>
+        try {
+<span class="nc" id="L384">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L385">            ps.setInt(1, customerId);</span>
+<span class="nc" id="L386">            ps.executeUpdate();</span>
+<span class="nc" id="L387">        } catch (SQLException e) {</span>
+<span class="nc" id="L388">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+
+<span class="nc bnc" id="L393" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L394">                    ps.close();</span>
+                }
+<span class="nc" id="L396">            } catch (SQLException e) {</span>
+<span class="nc" id="L397">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L398">            }</span>
+
+        }
+
+<span class="nc" id="L402">    }</span>
+
+    public static void main(String[] args) {
+
+<span class="nc" id="L406">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

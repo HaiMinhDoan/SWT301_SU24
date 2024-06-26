@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AsConvertMvn-1.0-SNAPSHOT</a> &gt; <a href="index.source.html" class="el_package">com.mycompany.asconvertmvn.dal</a> &gt; <span class="el_source">CustomerDAO.java</span></div><h1>CustomerDAO.java</h1><pre class="source lang-java linenums">/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.asconvertmvn.dal;
+
+import com.mycompany.asconvertmvn.model.Customer;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author tranm
+ */
+public class CustomerDAO {
+
+<span class="nc" id="L23">    private static final Logger logger = Logger.getLogger(CustomerDAO.class.getName());</span>
+<span class="nc" id="L24">    public static final CustomerDAO INSTANCE = new CustomerDAO();</span>
+    private Connection con;
+
+<span class="nc" id="L27">    public CustomerDAO() {</span>
+
+<span class="nc" id="L29">        con = new DBContext().connection;</span>
+
+<span class="nc" id="L31">    }</span>
+
+    public int insertCustomer(Customer c) {
+
+<span class="nc" id="L35">        String sql = &quot;Insert into Customer(FirstName, LastName, Email, Phone, Address, Gender) values(?, ?, ?, ?, ?, ?)&quot;;</span>
+<span class="nc" id="L36">        PreparedStatement ps = null;</span>
+<span class="nc" id="L37">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L39">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L40">            ps.setString(1, c.getFirstName());</span>
+<span class="nc" id="L41">            ps.setString(2, c.getLastName());</span>
+<span class="nc" id="L42">            ps.setString(3, c.getEmail());</span>
+<span class="nc" id="L43">            ps.setString(4, c.getPhone());</span>
+<span class="nc" id="L44">            ps.setString(5, c.getAddress());</span>
+<span class="nc" id="L45">            ps.setString(6, c.getGender());</span>
+<span class="nc" id="L46">            ps.executeUpdate();</span>
+<span class="nc" id="L47">            String sql1 = &quot;select top 1 CustomerID from Customer order by CustomerID desc&quot;;</span>
+<span class="nc" id="L48">            PreparedStatement ps1 = con.prepareStatement(sql1);</span>
+<span class="nc" id="L49">            rs = ps1.executeQuery();</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L51">                int cusId = rs.getInt(1);</span>
+<span class="nc" id="L52">                return cusId;</span>
+            }
+<span class="nc" id="L54">        } catch (SQLException e) {</span>
+<span class="nc" id="L55">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L60">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L63">                    ps.close();</span>
+                }
+<span class="nc" id="L65">            } catch (SQLException e) {</span>
+<span class="nc" id="L66">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L67">            }</span>
+
+        }
+
+<span class="nc" id="L71">        return 0;</span>
+    }
+
+    public boolean insertCustomerV2(Customer c) {
+<span class="nc" id="L75">        String sql = &quot;Insert into Customer(FirstName, LastName, Email, Phone, Address, Gender) values(?, ?, ?, ?, ?, ?)&quot;;</span>
+<span class="nc" id="L76">        PreparedStatement ps = null;</span>
+<span class="nc" id="L77">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L79">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L80">            ps.setString(1, c.getFirstName());</span>
+<span class="nc" id="L81">            ps.setString(2, c.getLastName());</span>
+<span class="nc" id="L82">            ps.setString(3, c.getEmail());</span>
+<span class="nc" id="L83">            ps.setString(4, c.getPhone());</span>
+<span class="nc" id="L84">            ps.setString(5, c.getAddress());</span>
+<span class="nc" id="L85">            ps.setString(6, c.getGender());</span>
+<span class="nc" id="L86">            ps.executeUpdate();</span>
+<span class="nc" id="L87">            return true;</span>
+<span class="nc" id="L88">        } catch (SQLException e) {</span>
+<span class="nc" id="L89">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+        } finally {
+            try {
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L93">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L96">                    ps.close();</span>
+                }
+<span class="nc" id="L98">            } catch (SQLException e) {</span>
+<span class="nc" id="L99">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L100">            }</span>
+        }
+<span class="nc" id="L102">        return false;</span>
+    }
+
+    public List&lt;Customer&gt; getAllCustomers() {
+<span class="nc" id="L106">        List&lt;Customer&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L107">        String sql = &quot;select * from Customer c left join Account a ON c.CustomerID = a.CustomerID&quot;;</span>
+<span class="nc" id="L108">        PreparedStatement ps = null;</span>
+<span class="nc" id="L109">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L111">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L112">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L114">                Customer c = new Customer();</span>
+<span class="nc" id="L115">                c.setCustomerId(rs.getInt(&quot;CustomerID&quot;));</span>
+<span class="nc" id="L116">                c.setFirstName(rs.getString(&quot;FirstName&quot;));</span>
+<span class="nc" id="L117">                c.setLastName(rs.getString(&quot;LastName&quot;));</span>
+<span class="nc" id="L118">                c.setEmail(rs.getString(&quot;Email&quot;));</span>
+<span class="nc" id="L119">                c.setPhone(rs.getString(&quot;Phone&quot;));</span>
+<span class="nc" id="L120">                c.setAddress(rs.getString(&quot;Address&quot;));</span>
+<span class="nc" id="L121">                c.setGender(rs.getString(&quot;Gender&quot;));</span>
+<span class="nc" id="L122">                list.add(c);</span>
+<span class="nc" id="L123">            }</span>
+<span class="nc" id="L124">        } catch (SQLException e) {</span>
+<span class="nc" id="L125">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L130">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L133">                    ps.close();</span>
+                }
+<span class="nc" id="L135">            } catch (SQLException e) {</span>
+<span class="nc" id="L136">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L137">            }</span>
+
+        }
+<span class="nc" id="L140">        return list;</span>
+    }
+
+    public boolean updateCustomerInfo(Customer c) {
+<span class="nc" id="L144">        String sql = &quot;Update Customer SET FirstName = ?, LastName = ?,&quot;</span>
+                + &quot; Email = ?, Phone = ?, Address = ?, Gender = ? Where CustomerID = ?&quot;;
+<span class="nc" id="L146">        PreparedStatement ps = null;</span>
+<span class="nc" id="L147">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L149">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L150">            ps.setString(1, c.getFirstName());</span>
+<span class="nc" id="L151">            ps.setString(2, c.getLastName());</span>
+<span class="nc" id="L152">            ps.setString(3, c.getEmail());</span>
+<span class="nc" id="L153">            ps.setString(4, c.getPhone());</span>
+<span class="nc" id="L154">            ps.setString(5, c.getAddress());</span>
+<span class="nc" id="L155">            ps.setString(6, c.getGender());</span>
+<span class="nc" id="L156">            ps.setInt(7, c.getCustomerId());</span>
+<span class="nc" id="L157">            ps.executeUpdate();</span>
+<span class="nc" id="L158">            return true;</span>
+<span class="nc" id="L159">        } catch (SQLException e) {</span>
+<span class="nc" id="L160">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L164" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L165">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L168">                    ps.close();</span>
+                }
+<span class="nc" id="L170">            } catch (SQLException e) {</span>
+<span class="nc" id="L171">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L172">            }</span>
+
+        }
+<span class="nc" id="L175">        return false;</span>
+    }
+
+    public Customer getCustomerById(int cusId) {
+<span class="nc" id="L179">        String sql = &quot;select * from Customer where CustomerId = ?&quot;;</span>
+<span class="nc" id="L180">        PreparedStatement ps = null;</span>
+<span class="nc" id="L181">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L183">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L184">            ps.setInt(1, cusId);</span>
+<span class="nc" id="L185">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L187">                Customer c = new Customer();</span>
+<span class="nc" id="L188">                c.setCustomerId(rs.getInt(&quot;CustomerID&quot;));</span>
+<span class="nc" id="L189">                c.setFirstName(rs.getString(&quot;FirstName&quot;));</span>
+<span class="nc" id="L190">                c.setLastName(rs.getString(&quot;LastName&quot;));</span>
+<span class="nc" id="L191">                c.setEmail(rs.getString(&quot;Email&quot;));</span>
+<span class="nc" id="L192">                c.setPhone(rs.getString(&quot;Phone&quot;));</span>
+<span class="nc" id="L193">                c.setAddress(rs.getString(&quot;Address&quot;));</span>
+<span class="nc" id="L194">                c.setGender(rs.getString(&quot;Gender&quot;));</span>
+<span class="nc" id="L195">                return c;</span>
+            }
+<span class="nc" id="L197">        } catch (SQLException e) {</span>
+<span class="nc" id="L198">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+        } finally {
+            try {
+<span class="nc bnc" id="L201" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L202">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L204" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L205">                    ps.close();</span>
+                }
+<span class="nc" id="L207">            } catch (SQLException e) {</span>
+<span class="nc" id="L208">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L209">            }</span>
+        }
+<span class="nc" id="L211">        return null;</span>
+    }
+
+    public Customer getCustomerName(String firstname, String lastName) {
+<span class="nc" id="L215">        String sql = &quot;select * from Customer where FirstName = ? OR LastName = ?&quot;;</span>
+<span class="nc" id="L216">        PreparedStatement ps = null;</span>
+<span class="nc" id="L217">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L219">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L220">            ps.setString(1, firstname);</span>
+<span class="nc" id="L221">            ps.setString(2, lastName);</span>
+
+<span class="nc" id="L223">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L225">                Customer c = new Customer();</span>
+<span class="nc" id="L226">                c.setCustomerId(rs.getInt(&quot;CustomerID&quot;));</span>
+<span class="nc" id="L227">                c.setFirstName(rs.getString(&quot;FirstName&quot;));</span>
+<span class="nc" id="L228">                c.setLastName(rs.getString(&quot;LastName&quot;));</span>
+<span class="nc" id="L229">                c.setEmail(rs.getString(&quot;Email&quot;));</span>
+<span class="nc" id="L230">                c.setPhone(rs.getString(&quot;Phone&quot;));</span>
+<span class="nc" id="L231">                c.setAddress(rs.getString(&quot;Address&quot;));</span>
+<span class="nc" id="L232">                c.setGender(rs.getString(&quot;Gender&quot;));</span>
+<span class="nc" id="L233">                return c;</span>
+            }
+<span class="nc" id="L235">        } catch (SQLException e) {</span>
+<span class="nc" id="L236">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L240" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L241">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L243" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L244">                    ps.close();</span>
+                }
+<span class="nc" id="L246">            } catch (SQLException e) {</span>
+<span class="nc" id="L247">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L248">            }</span>
+
+        }
+
+<span class="nc" id="L252">        return null;</span>
+    }
+
+    public boolean deleteCustomerById(int id) {
+<span class="nc" id="L256">        String sql = &quot;DELETE  Customer WHERE CustomerID = ?&quot;;</span>
+<span class="nc" id="L257">        PreparedStatement ps = null;</span>
+
+        try {
+<span class="nc" id="L260">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L261">            ps.setInt(1, id);</span>
+<span class="nc" id="L262">            ps.executeUpdate();</span>
+<span class="nc" id="L263">            return true;</span>
+<span class="nc" id="L264">        } catch (SQLException e) {</span>
+<span class="nc" id="L265">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {   
+<span class="nc bnc" id="L269" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L270">                    ps.close();</span>
+                }
+<span class="nc" id="L272">            } catch (SQLException e) {</span>
+<span class="nc" id="L273">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L274">            }</span>
+
+        }
+        
+        
+<span class="nc" id="L279">        return false;</span>
+
+    }
+
+    public boolean deleteCusById(int id) {
+<span class="nc" id="L284">        String sql1 = &quot;UPDATE [Order]\n&quot;</span>
+                + &quot;SET CustomerID = NULL\n&quot;
+                + &quot;WHERE CustomerID = ?&quot;;
+<span class="nc" id="L287">        PreparedStatement ps1 = null;</span>
+<span class="nc" id="L288">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L290">            ps1 = con.prepareStatement(sql1);</span>
+<span class="nc" id="L291">            ps1.setInt(1, id);</span>
+<span class="nc" id="L292">            ps1.executeUpdate();</span>
+<span class="nc" id="L293">            String sql2 = &quot;UPDATE Account SET CustomerID = NULL WHERE CustomerID = ?&quot;;</span>
+<span class="nc" id="L294">            PreparedStatement ps2 = con.prepareStatement(sql2);</span>
+<span class="nc" id="L295">            ps2.setInt(1, id);</span>
+<span class="nc" id="L296">            ps2.executeUpdate();</span>
+<span class="nc" id="L297">            String sql3 = &quot;DELETE FROM Customer WHERE CustomerID = ?&quot;;</span>
+<span class="nc" id="L298">            PreparedStatement ps3 = con.prepareStatement(sql3);</span>
+<span class="nc" id="L299">            ps3.setInt(1, id);</span>
+<span class="nc" id="L300">            ps3.executeUpdate();</span>
+
+<span class="nc" id="L302">            return true;</span>
+
+<span class="nc" id="L304">        } catch (SQLException e) {</span>
+<span class="nc" id="L305">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L309" title="All 2 branches missed.">                if (ps1 != null) {</span>
+<span class="nc" id="L310">                    ps1.close();</span>
+                }
+<span class="nc" id="L312">            } catch (SQLException e) {</span>
+<span class="nc" id="L313">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L314">            }</span>
+
+        }
+
+<span class="nc" id="L318">        return false;</span>
+    }
+
+    public int getCustomerIdAddNew() {
+<span class="nc" id="L322">        String sql = &quot;SELECT TOP 1 CustomerID FROM Customer ORDER BY CustomerID DESC;&quot;;</span>
+<span class="nc" id="L323">        int id = 0;</span>
+<span class="nc" id="L324">        PreparedStatement ps = null;</span>
+<span class="nc" id="L325">        ResultSet rs = null;</span>
+        try {
+<span class="nc" id="L327">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L328">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L330">                id = rs.getInt(&quot;CustomerID&quot;);</span>
+            }
+
+<span class="nc" id="L333">        } catch (SQLException e) {</span>
+<span class="nc" id="L334">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L338" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L339">                    ps.close();</span>
+                }
+<span class="nc" id="L341">            } catch (SQLException e) {</span>
+<span class="nc" id="L342">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L343">            }</span>
+
+        }
+
+<span class="nc" id="L347">        return id;</span>
+    }
+
+    public static void main(String[] args) {
+<span class="nc" id="L351">        CustomerDAO.INSTANCE.deleteCusById(10);</span>
+<span class="nc" id="L352">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
