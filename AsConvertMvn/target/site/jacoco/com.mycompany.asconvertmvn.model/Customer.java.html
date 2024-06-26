@@ -17,92 +17,93 @@ public class Customer {
     private String phone;
     private String address;
     private String gender;
-   
-<span class="nc" id="L21">    public Customer() {</span>
-<span class="nc" id="L22">    }</span>
 
-<span class="nc" id="L24">    public Customer(int customerId, String firstName, String lastName, String email, String phone, String address, String gender) {</span>
-<span class="nc" id="L25">        this.customerId = customerId;</span>
-<span class="nc" id="L26">        this.firstName = firstName;</span>
-<span class="nc" id="L27">        this.lastName = lastName;</span>
-<span class="nc" id="L28">        this.email = email;</span>
-<span class="nc" id="L29">        this.phone = phone;</span>
-<span class="nc" id="L30">        this.address = address;</span>
-<span class="nc" id="L31">        this.gender = gender;</span>
-<span class="nc" id="L32">    }</span>
+<span class="fc" id="L21">    public Customer() {</span>
+<span class="fc" id="L22">    }</span>
+
+<span class="fc" id="L24">    public Customer(int customerId, String firstName, String lastName, String email, String phone, String address, String gender) {</span>
+<span class="fc" id="L25">        this.customerId = customerId;</span>
+<span class="fc" id="L26">        this.firstName = firstName;</span>
+<span class="fc" id="L27">        this.lastName = lastName;</span>
+<span class="fc" id="L28">        this.email = email;</span>
+<span class="fc" id="L29">        this.phone = phone;</span>
+<span class="fc" id="L30">        this.address = address;</span>
+<span class="fc" id="L31">        this.gender = gender;</span>
+<span class="fc" id="L32">    }</span>
+
+<span class="fc" id="L34">    public Customer(String firstName, String lastName, String email, String phone, String address, String gender) {</span>
+<span class="fc" id="L35">        this.firstName = firstName;</span>
+<span class="fc" id="L36">        this.lastName = lastName;</span>
+<span class="fc" id="L37">        this.email = email;</span>
+<span class="fc" id="L38">        this.phone = phone;</span>
+<span class="fc" id="L39">        this.address = address;</span>
+<span class="fc" id="L40">        this.gender = gender;</span>
+<span class="fc" id="L41">    }</span>
 
     public int getCustomerId() {
-<span class="nc" id="L35">        return customerId;</span>
+<span class="fc" id="L44">        return customerId;</span>
     }
 
     public void setCustomerId(int customerId) {
-<span class="nc" id="L39">        this.customerId = customerId;</span>
-<span class="nc" id="L40">    }</span>
+<span class="fc" id="L48">        this.customerId = customerId;</span>
+<span class="fc" id="L49">    }</span>
 
     public String getFirstName() {
-<span class="nc" id="L43">        return firstName;</span>
+<span class="fc" id="L52">        return firstName;</span>
     }
 
     public void setFirstName(String firstName) {
-<span class="nc" id="L47">        this.firstName = firstName;</span>
-<span class="nc" id="L48">    }</span>
+<span class="fc" id="L56">        this.firstName = firstName;</span>
+<span class="fc" id="L57">    }</span>
 
     public String getLastName() {
-<span class="nc" id="L51">        return lastName;</span>
+<span class="fc" id="L60">        return lastName;</span>
     }
 
     public void setLastName(String lastName) {
-<span class="nc" id="L55">        this.lastName = lastName;</span>
-<span class="nc" id="L56">    }</span>
+<span class="fc" id="L64">        this.lastName = lastName;</span>
+<span class="fc" id="L65">    }</span>
 
     public String getEmail() {
-<span class="nc" id="L59">        return email;</span>
+<span class="fc" id="L68">        return email;</span>
     }
 
     public void setEmail(String email) {
-<span class="nc" id="L63">        this.email = email;</span>
-<span class="nc" id="L64">    }</span>
+<span class="fc" id="L72">        this.email = email;</span>
+<span class="fc" id="L73">    }</span>
 
     public String getPhone() {
-<span class="nc" id="L67">        return phone;</span>
+<span class="fc" id="L76">        return phone;</span>
     }
 
     public void setPhone(String phone) {
-<span class="nc" id="L71">        this.phone = phone;</span>
-<span class="nc" id="L72">    }</span>
+<span class="fc" id="L80">        this.phone = phone;</span>
+<span class="fc" id="L81">    }</span>
 
     public String getAddress() {
-<span class="nc" id="L75">        return address;</span>
+<span class="fc" id="L84">        return address;</span>
     }
 
     public void setAddress(String address) {
-<span class="nc" id="L79">        this.address = address;</span>
-<span class="nc" id="L80">    }</span>
+<span class="fc" id="L88">        this.address = address;</span>
+<span class="fc" id="L89">    }</span>
 
     public String getGender() {
-<span class="nc" id="L83">        return gender;</span>
+<span class="fc" id="L92">        return gender;</span>
     }
 
     public void setGender(String gender) {
-<span class="nc" id="L87">        this.gender = gender;</span>
-<span class="nc" id="L88">    }</span>
-    
-    
+<span class="fc" id="L96">        this.gender = gender;</span>
+<span class="fc" id="L97">    }</span>
 
     public String getFullName() {
-<span class="nc" id="L93">        return firstName + &quot; &quot; + lastName;</span>
+<span class="nc" id="L100">        return firstName + &quot; &quot; + lastName;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L98">        return &quot;Customer{&quot; + &quot;customerId=&quot; + customerId + &quot;, firstName=&quot; + firstName + &quot;, lastName=&quot; + lastName + &quot;, email=&quot; + email + &quot;, phone=&quot; + phone + &quot;, address=&quot; + address + &quot;, gender=&quot; + gender + '}';</span>
+<span class="fc" id="L105">        return &quot;Customer{&quot; + &quot;customerId=&quot; + customerId + &quot;, firstName=&quot; + firstName + &quot;, lastName=&quot; + lastName + &quot;, email=&quot; + email + &quot;, phone=&quot; + phone + &quot;, address=&quot; + address + &quot;, gender=&quot; + gender + '}';</span>
     }
-   
-    
-    
-   
-    
-    
-     
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

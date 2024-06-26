@@ -17,12 +17,21 @@ public class Customer {
     private String phone;
     private String address;
     private String gender;
-   
+
     public Customer() {
     }
 
     public Customer(int customerId, String firstName, String lastName, String email, String phone, String address, String gender) {
         this.customerId = customerId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.gender = gender;
+    }
+
+    public Customer(String firstName, String lastName, String email, String phone, String address, String gender) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -86,8 +95,6 @@ public class Customer {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    
-    
 
     public String getFullName() {
         return firstName + " " + lastName;
@@ -97,11 +104,5 @@ public class Customer {
     public String toString() {
         return "Customer{" + "customerId=" + customerId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address + ", gender=" + gender + '}';
     }
-   
-    
-    
-   
-    
-    
-     
+
 }

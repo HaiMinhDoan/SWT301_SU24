@@ -71,6 +71,37 @@ public class CustomerDAO {
         return 0;
     }
 
+    public boolean insertCustomerV2(Customer c) {
+        String sql = "Insert into Customer(FirstName, LastName, Email, Phone, Address, Gender) values(?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setString(1, c.getFirstName());
+            ps.setString(2, c.getLastName());
+            ps.setString(3, c.getEmail());
+            ps.setString(4, c.getPhone());
+            ps.setString(5, c.getAddress());
+            ps.setString(6, c.getGender());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "", e);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "", e);
+            }
+        }
+        return false;
+    }
+
     public List<Customer> getAllCustomers() {
         List<Customer> list = new ArrayList<>();
         String sql = "select * from Customer c left join Account a ON c.CustomerID = a.CustomerID";
@@ -110,7 +141,8 @@ public class CustomerDAO {
     }
 
     public boolean updateCustomerInfo(Customer c) {
-        String sql = "Update Customer SET FirstName = ?, LastName = ?, Email = ?, Phone = ?, Address = ?, Gender = ? Where CustomerID = ?";
+        String sql = "Update Customer SET FirstName = ?, LastName = ?,"
+                + " Email = ?, Phone = ?, Address = ?, Gender = ? Where CustomerID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -148,9 +180,47 @@ public class CustomerDAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-             ps = con.prepareStatement(sql);
+            ps = con.prepareStatement(sql);
             ps.setInt(1, cusId);
-             rs = ps.executeQuery();
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Customer c = new Customer();
+                c.setCustomerId(rs.getInt("CustomerID"));
+                c.setFirstName(rs.getString("FirstName"));
+                c.setLastName(rs.getString("LastName"));
+                c.setEmail(rs.getString("Email"));
+                c.setPhone(rs.getString("Phone"));
+                c.setAddress(rs.getString("Address"));
+                c.setGender(rs.getString("Gender"));
+                return c;
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "", e);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "", e);
+            }
+        }
+        return null;
+    }
+
+    public Customer getCustomerName(String firstname, String lastName) {
+        String sql = "select * from Customer where FirstName = ? OR LastName = ?";
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setString(1, firstname);
+            ps.setString(2, lastName);
+
+            rs = ps.executeQuery();
             if (rs.next()) {
                 Customer c = new Customer();
                 c.setCustomerId(rs.getInt("CustomerID"));
@@ -182,7 +252,34 @@ public class CustomerDAO {
         return null;
     }
 
-    public void deleteCusById(int id) {
+    public boolean deleteCustomerById(int id) {
+        String sql = "DELETE  Customer WHERE CustomerID = ?";
+        PreparedStatement ps = null;
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "", e);
+
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "", e);
+            }
+
+        }
+
+        return false;
+
+    }
+
+    public boolean deleteCusById(int id) {
         String sql1 = "UPDATE [Order]\n"
                 + "SET CustomerID = NULL\n"
                 + "WHERE CustomerID = ?";
@@ -201,6 +298,8 @@ public class CustomerDAO {
             ps3.setInt(1, id);
             ps3.executeUpdate();
 
+            return true;
+
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "", e);
 
@@ -214,10 +313,41 @@ public class CustomerDAO {
             }
 
         }
+
+        return false;
+    }
+
+    public int getCustomerIdAddNew() {
+        String sql = "SELECT TOP 1 CustomerID FROM Customer ORDER BY CustomerID DESC;";
+        int id = 0;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("CustomerID");
+            }
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "", e);
+
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "", e);
+            }
+
+        }
+
+        return id;
     }
 
     public static void main(String[] args) {
-        CustomerDAO.INSTANCE.deleteCusById(10);
+        System.out.println(CustomerDAO.INSTANCE.getCustomerById(5));
     }
 
 }

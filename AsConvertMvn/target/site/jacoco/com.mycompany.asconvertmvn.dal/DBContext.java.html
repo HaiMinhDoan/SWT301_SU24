@@ -13,8 +13,8 @@ public class DBContext {
         try {
             //Change the username password and url to connect your own database
 <span class="fc" id="L15">            String username = &quot;sa&quot;;</span>
-<span class="fc" id="L16">            String password = &quot;12345678&quot;;</span>
-<span class="fc" id="L17">            String url = &quot;jdbc:sqlserver://localhost:1433;databaseName=Store_Assignment3;encrypt=false&quot;;</span>
+<span class="fc" id="L16">            String password = &quot;123456&quot;;</span>
+<span class="fc" id="L17">            String url = &quot;jdbc:sqlserver://MINHDCPC\\MINHDUC:1433;databaseName=Store_Assignment;encrypt=false&quot;;</span>
 <span class="fc" id="L18">            Class.forName(&quot;com.microsoft.sqlserver.jdbc.SQLServerDriver&quot;);</span>
 <span class="fc" id="L19">            connection = DriverManager.getConnection(url, username, password);</span>
 <span class="nc" id="L20">        } catch (ClassNotFoundException | SQLException ex) {</span>
