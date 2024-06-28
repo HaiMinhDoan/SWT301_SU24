@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.asconvertmvn.dal;
-
 import com.mycompany.asconvertmvn.model.Category;
 import com.mycompany.asconvertmvn.model.Product;
 import java.sql.Connection;
@@ -25,6 +24,7 @@ public class ProductDAO {
 
     public static final ProductDAO INSTANCE = new ProductDAO();
     public Connection con;
+    public String sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductID = ?";
 
     public ProductDAO() {
         con = new DBContext().connection;
@@ -32,7 +32,7 @@ public class ProductDAO {
 
     public List<Product> getAllProduct() {
         List<Product> list = new ArrayList<>();
-        String sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID";
+        sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -74,17 +74,15 @@ public class ProductDAO {
         return list;
     }
 
-    public Product getProductById(int id) throws Exception {
+    public Product getProductById(int id) {
 
-        String sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductID = ?";
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            ps = con.prepareStatement(sql);
+        sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductID = ?";
+        Product p = new Product();
+        try (Connection connection = DBContextTest.getConnection() ;PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
-            rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Product p = new Product();
+
                 p.setProductId(rs.getInt("ProductID"));
                 p.setProductName(rs.getString("ProductName"));
                 p.setQuantity(rs.getInt("Quantity"));
@@ -97,31 +95,19 @@ public class ProductDAO {
                 c.setCategoryId(rs.getInt("CategoryID"));
                 c.setCategoryName(rs.getString("CategoryName"));
                 p.setCategory(c);
-                return p;
+
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             logger.log(Level.SEVERE, "", e);
-
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                logger.log(Level.SEVERE, "", e);
-            }
-
+            p = null;
         }
-        return null;
+        return p;
     }
 
     public List<Category> getAllCategory() {
         List<Category> list = new ArrayList<>();
-        String sql = "select * from Category";
+        sql = "select * from Category";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -153,7 +139,7 @@ public class ProductDAO {
 
     public List<Product> getProductsByCategoryId(int id) {
         List<Product> list = new ArrayList<>();
-        String sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where c.CategoryID = ?";
+        sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where c.CategoryID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -198,7 +184,6 @@ public class ProductDAO {
 
     public List<Product> getProductFilter(int choose) {
         List<Product> list = new ArrayList<>();
-        String sql;
         PreparedStatement ps = null;
         ResultSet rs = null;
         switch (choose) {
@@ -371,7 +356,7 @@ public class ProductDAO {
     public List<Product> searchProductByName(String key) {
         List<Product> list = new ArrayList<>();
 
-        String sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductName like N'%" + key + "%'";
+        sql = "select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductName like N'%" + key + "%'";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -413,45 +398,30 @@ public class ProductDAO {
         return list;
     }
 
-    public boolean insertProduct(Product p) throws Exception {
-        String sql = "INSERT INTO Product (ProductName, CategoryID, Price, Image, Quantity, Sale) VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement ps = null;
+    public boolean insertProduct(Product p)  {
+        sql = "INSERT INTO Product (ProductName, CategoryID, Price, Image, Quantity, Sale) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try {
-            ps = con.prepareStatement(sql);
+        int check = 0;
+        try (Connection connection = DBContextTest.getConnection() ;PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getProductName());
             ps.setInt(2, p.getCategory().getCategoryId());
             ps.setDouble(3, p.getPrice());
             ps.setString(4, p.getImg());
             ps.setInt(5, p.getQuantity());
             ps.setDouble(6, p.getSale());
-            ps.executeUpdate();
-            return true;
-        } catch (SQLException e) {
+            check = ps.executeUpdate();
+        } catch (SQLException | ClassNotFoundException e) {
             logger.log(Level.SEVERE, "", e);
 
-        } finally {
-            try {
-
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                logger.log(Level.SEVERE, "", e);
-            }
-
         }
-
-        return false;
+        return check > 0;
     }
 
-    public boolean updateProduct(Product p) throws SQLException {
-        String sql = "Update Product SET ProductName = ?, Quantity = ?, Sale = ?, Price = ?, Image = ? where ProductID = ? ";
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+    public boolean updateProduct(Product p) {
+        sql = "Update Product SET ProductName = ?, Quantity = ?, Sale = ?, Price = ?, Image = ? where ProductID = ? ";
+
         int check = 0;
-        try {
-            ps = con.prepareStatement(sql);
+        try (Connection connection = DBContextTest.getConnection() ;PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getProductName());
             ps.setInt(2, p.getQuantity());
             ps.setDouble(3, p.getSale());
@@ -459,20 +429,8 @@ public class ProductDAO {
             ps.setString(5, p.getImg());
             ps.setInt(6, p.getProductId());
             check = ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             logger.log(Level.SEVERE, "", e);
-
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                logger.log(Level.SEVERE, "", e);
-            }
 
         }
 
@@ -480,27 +438,15 @@ public class ProductDAO {
     }
 
     public boolean deleteProductById(int id) {
-        PreparedStatement ps = null;
+        sql = "Delete Product where ProductID = ?";
+
         int check = 0;
-        try {
-            String sql3 = "Delete Product where ProductID = ?";
-            PreparedStatement ps3 = con.prepareStatement(sql3);
-            ps3.setInt(1, id);
-            check = ps3.executeUpdate();
-        } catch (SQLException e) {
+        try (Connection connection = DBContextTest.getConnection() ;PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            check = ps.executeUpdate();
+        } catch (SQLException| ClassNotFoundException e) {
             logger.log(Level.SEVERE, "", e);
             return false;
-
-        } finally {
-            try {
-
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                logger.log(Level.SEVERE, "", e);
-            }
-
         }
         return check >= 0;
     }

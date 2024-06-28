@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.asconvertmvn.dal;
-
 import com.mycompany.asconvertmvn.model.Category;
 import com.mycompany.asconvertmvn.model.Product;
 import java.sql.Connection;
@@ -21,10 +20,11 @@ import java.util.logging.Logger;
  */
 public class ProductDAO {
 
-<span class="fc" id="L24">    private static final Logger logger = Logger.getLogger(ProductDAO.class.getName());</span>
+<span class="fc" id="L23">    private static final Logger logger = Logger.getLogger(ProductDAO.class.getName());</span>
 
-<span class="fc" id="L26">    public static final ProductDAO INSTANCE = new ProductDAO();</span>
+<span class="fc" id="L25">    public static final ProductDAO INSTANCE = new ProductDAO();</span>
     public Connection con;
+<span class="fc" id="L27">    public String sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductID = ?&quot;;</span>
 
 <span class="fc" id="L29">    public ProductDAO() {</span>
 <span class="fc" id="L30">        con = new DBContext().connection;</span>
@@ -32,7 +32,7 @@ public class ProductDAO {
 
     public List&lt;Product&gt; getAllProduct() {
 <span class="nc" id="L34">        List&lt;Product&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L35">        String sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID&quot;;</span>
+<span class="nc" id="L35">        sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID&quot;;</span>
 <span class="nc" id="L36">        PreparedStatement ps = null;</span>
 <span class="nc" id="L37">        ResultSet rs = null;</span>
         try {
@@ -74,436 +74,381 @@ public class ProductDAO {
 <span class="nc" id="L74">        return list;</span>
     }
 
-    public Product getProductById(int id) throws Exception {
+    public Product getProductById(int id) {
 
-<span class="fc" id="L79">        String sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductID = ?&quot;;</span>
-<span class="fc" id="L80">        PreparedStatement ps = null;</span>
-<span class="fc" id="L81">        ResultSet rs = null;</span>
-        try {
-<span class="fc" id="L83">            ps = con.prepareStatement(sql);</span>
-<span class="fc" id="L84">            ps.setInt(1, id);</span>
-<span class="fc" id="L85">            rs = ps.executeQuery();</span>
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">            if (rs.next()) {</span>
-<span class="fc" id="L87">                Product p = new Product();</span>
-<span class="fc" id="L88">                p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
-<span class="fc" id="L89">                p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
-<span class="fc" id="L90">                p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
-<span class="fc" id="L91">                p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
-<span class="fc" id="L92">                float priceFloat = rs.getFloat(&quot;Price&quot;);</span>
-<span class="fc" id="L93">                double priceDouble = priceFloat; // Chuyển đổi từ float sang double</span>
-<span class="fc" id="L94">                p.setPrice(priceDouble);</span>
-<span class="fc" id="L95">                p.setImg(rs.getString(&quot;Image&quot;));</span>
-<span class="fc" id="L96">                Category c = new Category();</span>
-<span class="fc" id="L97">                c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
-<span class="fc" id="L98">                c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
-<span class="fc" id="L99">                p.setCategory(c);</span>
-<span class="fc" id="L100">                return p;</span>
+<span class="fc" id="L79">        sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductID = ?&quot;;</span>
+<span class="fc" id="L80">        Product p = new Product();</span>
+<span class="fc" id="L81">        try (Connection connection = DBContextTest.getConnection() ;PreparedStatement ps = connection.prepareStatement(sql)) {</span>
+<span class="fc" id="L82">            ps.setInt(1, id);</span>
+<span class="fc" id="L83">            ResultSet rs = ps.executeQuery();</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            if (rs.next()) {</span>
+
+<span class="fc" id="L86">                p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
+<span class="fc" id="L87">                p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
+<span class="fc" id="L88">                p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="fc" id="L89">                p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
+<span class="fc" id="L90">                float priceFloat = rs.getFloat(&quot;Price&quot;);</span>
+<span class="fc" id="L91">                double priceDouble = priceFloat; // Chuyển đổi từ float sang double</span>
+<span class="fc" id="L92">                p.setPrice(priceDouble);</span>
+<span class="fc" id="L93">                p.setImg(rs.getString(&quot;Image&quot;));</span>
+<span class="fc" id="L94">                Category c = new Category();</span>
+<span class="fc" id="L95">                c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
+<span class="fc" id="L96">                c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
+<span class="fc" id="L97">                p.setCategory(c);</span>
+
             }
 
-<span class="nc" id="L103">        } catch (SQLException e) {</span>
-<span class="nc" id="L104">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-
-        } finally {
-            try {
-<span class="pc bpc" id="L108" title="1 of 2 branches missed.">                if (rs != null) {</span>
-<span class="fc" id="L109">                    rs.close();</span>
-                }
-<span class="pc bpc" id="L111" title="1 of 2 branches missed.">                if (ps != null) {</span>
-<span class="fc" id="L112">                    ps.close();</span>
-                }
-<span class="nc" id="L114">            } catch (SQLException e) {</span>
-<span class="nc" id="L115">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="fc" id="L116">            }</span>
-
-        }
-<span class="nc" id="L119">        return null;</span>
+<span class="fc" id="L101">        } catch (SQLException | ClassNotFoundException e) {</span>
+<span class="fc" id="L102">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="fc" id="L103">            p = null;</span>
+<span class="fc" id="L104">        }</span>
+<span class="fc" id="L105">        return p;</span>
     }
 
     public List&lt;Category&gt; getAllCategory() {
-<span class="nc" id="L123">        List&lt;Category&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L124">        String sql = &quot;select * from Category&quot;;</span>
-<span class="nc" id="L125">        PreparedStatement ps = null;</span>
-<span class="nc" id="L126">        ResultSet rs = null;</span>
+<span class="nc" id="L109">        List&lt;Category&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L110">        sql = &quot;select * from Category&quot;;</span>
+<span class="nc" id="L111">        PreparedStatement ps = null;</span>
+<span class="nc" id="L112">        ResultSet rs = null;</span>
         try {
-<span class="nc" id="L128">            ps = con.prepareStatement(sql);</span>
-<span class="nc" id="L129">            rs = ps.executeQuery();</span>
-<span class="nc bnc" id="L130" title="All 2 branches missed.">            while (rs.next()) {</span>
-<span class="nc" id="L131">                Category c = new Category(rs.getInt(&quot;CategoryID&quot;), rs.getString(&quot;CategoryName&quot;));</span>
-<span class="nc" id="L132">                list.add(c);</span>
-<span class="nc" id="L133">            }</span>
-<span class="nc" id="L134">        } catch (SQLException e) {</span>
-<span class="nc" id="L135">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L114">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L115">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L117">                Category c = new Category(rs.getInt(&quot;CategoryID&quot;), rs.getString(&quot;CategoryName&quot;));</span>
+<span class="nc" id="L118">                list.add(c);</span>
+<span class="nc" id="L119">            }</span>
+<span class="nc" id="L120">        } catch (SQLException e) {</span>
+<span class="nc" id="L121">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 
         } finally {
             try {
-<span class="nc bnc" id="L139" title="All 2 branches missed.">                if (rs != null) {</span>
-<span class="nc" id="L140">                    rs.close();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L126">                    rs.close();</span>
                 }
-<span class="nc bnc" id="L142" title="All 2 branches missed.">                if (ps != null) {</span>
-<span class="nc" id="L143">                    ps.close();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L129">                    ps.close();</span>
                 }
-<span class="nc" id="L145">            } catch (SQLException e) {</span>
-<span class="nc" id="L146">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="nc" id="L147">            }</span>
+<span class="nc" id="L131">            } catch (SQLException e) {</span>
+<span class="nc" id="L132">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L133">            }</span>
 
         }
 
-<span class="nc" id="L151">        return list;</span>
+<span class="nc" id="L137">        return list;</span>
     }
 
     public List&lt;Product&gt; getProductsByCategoryId(int id) {
-<span class="nc" id="L155">        List&lt;Product&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L156">        String sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where c.CategoryID = ?&quot;;</span>
-<span class="nc" id="L157">        PreparedStatement ps = null;</span>
-<span class="nc" id="L158">        ResultSet rs = null;</span>
+<span class="nc" id="L141">        List&lt;Product&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L142">        sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where c.CategoryID = ?&quot;;</span>
+<span class="nc" id="L143">        PreparedStatement ps = null;</span>
+<span class="nc" id="L144">        ResultSet rs = null;</span>
         try {
-<span class="nc" id="L160">            ps = con.prepareStatement(sql);</span>
-<span class="nc" id="L161">            ps.setInt(1, id);</span>
-<span class="nc" id="L162">            rs = ps.executeQuery();</span>
-<span class="nc bnc" id="L163" title="All 2 branches missed.">            while (rs.next()) {</span>
-<span class="nc" id="L164">                Product p = new Product();</span>
-<span class="nc" id="L165">                p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
-<span class="nc" id="L166">                p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
-<span class="nc" id="L167">                p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
-<span class="nc" id="L168">                p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
-<span class="nc" id="L169">                p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
-<span class="nc" id="L170">                p.setImg(rs.getString(&quot;Image&quot;));</span>
-<span class="nc" id="L171">                p.setDescription(rs.getString(&quot;Description&quot;));</span>
-<span class="nc" id="L172">                Category c = new Category();</span>
-<span class="nc" id="L173">                c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
-<span class="nc" id="L174">                c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
-<span class="nc" id="L175">                p.setCategory(c);</span>
-<span class="nc" id="L176">                list.add(p);</span>
-<span class="nc" id="L177">            }</span>
+<span class="nc" id="L146">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L147">            ps.setInt(1, id);</span>
+<span class="nc" id="L148">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L150">                Product p = new Product();</span>
+<span class="nc" id="L151">                p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
+<span class="nc" id="L152">                p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
+<span class="nc" id="L153">                p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="nc" id="L154">                p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
+<span class="nc" id="L155">                p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
+<span class="nc" id="L156">                p.setImg(rs.getString(&quot;Image&quot;));</span>
+<span class="nc" id="L157">                p.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="nc" id="L158">                Category c = new Category();</span>
+<span class="nc" id="L159">                c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
+<span class="nc" id="L160">                c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
+<span class="nc" id="L161">                p.setCategory(c);</span>
+<span class="nc" id="L162">                list.add(p);</span>
+<span class="nc" id="L163">            }</span>
 
-<span class="nc" id="L179">        } catch (SQLException e) {</span>
-<span class="nc" id="L180">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L165">        } catch (SQLException e) {</span>
+<span class="nc" id="L166">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 
         } finally {
             try {
-<span class="nc bnc" id="L184" title="All 2 branches missed.">                if (rs != null) {</span>
-<span class="nc" id="L185">                    rs.close();</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L171">                    rs.close();</span>
                 }
-<span class="nc bnc" id="L187" title="All 2 branches missed.">                if (ps != null) {</span>
-<span class="nc" id="L188">                    ps.close();</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L174">                    ps.close();</span>
                 }
-<span class="nc" id="L190">            } catch (SQLException e) {</span>
-<span class="nc" id="L191">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="nc" id="L192">            }</span>
+<span class="nc" id="L176">            } catch (SQLException e) {</span>
+<span class="nc" id="L177">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L178">            }</span>
 
         }
-<span class="nc" id="L195">        return list;</span>
+<span class="nc" id="L181">        return list;</span>
 
     }
 
     public List&lt;Product&gt; getProductFilter(int choose) {
-<span class="nc" id="L200">        List&lt;Product&gt; list = new ArrayList&lt;&gt;();</span>
-        String sql;
-<span class="nc" id="L202">        PreparedStatement ps = null;</span>
-<span class="nc" id="L203">        ResultSet rs = null;</span>
-<span class="nc bnc" id="L204" title="All 5 branches missed.">        switch (choose) {</span>
+<span class="nc" id="L186">        List&lt;Product&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L187">        PreparedStatement ps = null;</span>
+<span class="nc" id="L188">        ResultSet rs = null;</span>
+<span class="nc bnc" id="L189" title="All 5 branches missed.">        switch (choose) {</span>
             case 1:
-<span class="nc" id="L206">                sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID Order by ProductID desc&quot;;</span>
+<span class="nc" id="L191">                sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID Order by ProductID desc&quot;;</span>
                 try {
-<span class="nc" id="L208">                    ps = con.prepareStatement(sql);</span>
-<span class="nc" id="L209">                    rs = ps.executeQuery();</span>
-<span class="nc bnc" id="L210" title="All 2 branches missed.">                    while (rs.next()) {</span>
-<span class="nc" id="L211">                        Product p = new Product();</span>
-<span class="nc" id="L212">                        p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
-<span class="nc" id="L213">                        p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
-<span class="nc" id="L214">                        p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
-<span class="nc" id="L215">                        p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
-<span class="nc" id="L216">                        p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
-<span class="nc" id="L217">                        p.setImg(rs.getString(&quot;Image&quot;));</span>
-<span class="nc" id="L218">                        p.setDescription(rs.getString(&quot;Description&quot;));</span>
-<span class="nc" id="L219">                        Category c = new Category();</span>
-<span class="nc" id="L220">                        c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
-<span class="nc" id="L221">                        c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
-<span class="nc" id="L222">                        p.setCategory(c);</span>
-<span class="nc" id="L223">                        list.add(p);</span>
-<span class="nc" id="L224">                    }</span>
+<span class="nc" id="L193">                    ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L194">                    rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                    while (rs.next()) {</span>
+<span class="nc" id="L196">                        Product p = new Product();</span>
+<span class="nc" id="L197">                        p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
+<span class="nc" id="L198">                        p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
+<span class="nc" id="L199">                        p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="nc" id="L200">                        p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
+<span class="nc" id="L201">                        p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
+<span class="nc" id="L202">                        p.setImg(rs.getString(&quot;Image&quot;));</span>
+<span class="nc" id="L203">                        p.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="nc" id="L204">                        Category c = new Category();</span>
+<span class="nc" id="L205">                        c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
+<span class="nc" id="L206">                        c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
+<span class="nc" id="L207">                        p.setCategory(c);</span>
+<span class="nc" id="L208">                        list.add(p);</span>
+<span class="nc" id="L209">                    }</span>
 
-<span class="nc" id="L226">                } catch (SQLException e) {</span>
-<span class="nc" id="L227">                    logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L211">                } catch (SQLException e) {</span>
+<span class="nc" id="L212">                    logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 
                 } finally {
                     try {
-<span class="nc bnc" id="L231" title="All 2 branches missed.">                        if (rs != null) {</span>
-<span class="nc" id="L232">                            rs.close();</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">                        if (rs != null) {</span>
+<span class="nc" id="L217">                            rs.close();</span>
                         }
-<span class="nc bnc" id="L234" title="All 2 branches missed.">                        if (ps != null) {</span>
-<span class="nc" id="L235">                            ps.close();</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                        if (ps != null) {</span>
+<span class="nc" id="L220">                            ps.close();</span>
                         }
-<span class="nc" id="L237">                    } catch (SQLException e) {</span>
-<span class="nc" id="L238">                        logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="nc" id="L239">                    }</span>
+<span class="nc" id="L222">                    } catch (SQLException e) {</span>
+<span class="nc" id="L223">                        logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L224">                    }</span>
 
                 }
 
-<span class="nc" id="L243">                break;</span>
+<span class="nc" id="L228">                break;</span>
             case 2:
-<span class="nc" id="L245">                sql = &quot;SELECT Product.*, COALESCE(SUM(OrderDetail.Quantity), 0) AS TotalQuantity\n&quot;</span>
+<span class="nc" id="L230">                sql = &quot;SELECT Product.*, COALESCE(SUM(OrderDetail.Quantity), 0) AS TotalQuantity\n&quot;</span>
                         + &quot;FROM Product\n&quot;
                         + &quot;LEFT JOIN OrderDetail ON Product.ProductID = OrderDetail.ProductID\n&quot;
                         + &quot;GROUP BY Product.ProductID, Product.ProductName, Product.CategoryID, Product.Quantity, Product.Description, Product.Sale, Product.Price, Product.Image\n&quot;
                         + &quot;ORDER BY TotalQuantity DESC;&quot;;
                 try {
-<span class="nc" id="L251">                    ps = con.prepareStatement(sql);</span>
-<span class="nc" id="L252">                    rs = ps.executeQuery();</span>
-<span class="nc bnc" id="L253" title="All 2 branches missed.">                    while (rs.next()) {</span>
-<span class="nc" id="L254">                        Product p = new Product();</span>
-<span class="nc" id="L255">                        p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
-<span class="nc" id="L256">                        p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
-<span class="nc" id="L257">                        p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
-<span class="nc" id="L258">                        p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
-<span class="nc" id="L259">                        p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
-<span class="nc" id="L260">                        p.setImg(rs.getString(&quot;Image&quot;));</span>
-<span class="nc" id="L261">                        p.setDescription(rs.getString(&quot;Description&quot;));</span>
-<span class="nc" id="L262">                        Category c = new Category();</span>
-<span class="nc" id="L263">                        p.setCategory(c);</span>
-<span class="nc" id="L264">                        list.add(p);</span>
+<span class="nc" id="L236">                    ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L237">                    rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">                    while (rs.next()) {</span>
+<span class="nc" id="L239">                        Product p = new Product();</span>
+<span class="nc" id="L240">                        p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
+<span class="nc" id="L241">                        p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
+<span class="nc" id="L242">                        p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="nc" id="L243">                        p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
+<span class="nc" id="L244">                        p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
+<span class="nc" id="L245">                        p.setImg(rs.getString(&quot;Image&quot;));</span>
+<span class="nc" id="L246">                        p.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="nc" id="L247">                        Category c = new Category();</span>
+<span class="nc" id="L248">                        p.setCategory(c);</span>
+<span class="nc" id="L249">                        list.add(p);</span>
+<span class="nc" id="L250">                    }</span>
+
+<span class="nc" id="L252">                } catch (SQLException e) {</span>
+<span class="nc" id="L253">                    logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+                } finally {
+                    try {
+<span class="nc bnc" id="L257" title="All 2 branches missed.">                        if (rs != null) {</span>
+<span class="nc" id="L258">                            rs.close();</span>
+                        }
+<span class="nc bnc" id="L260" title="All 2 branches missed.">                        if (ps != null) {</span>
+<span class="nc" id="L261">                            ps.close();</span>
+                        }
+<span class="nc" id="L263">                    } catch (SQLException e) {</span>
+<span class="nc" id="L264">                        logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 <span class="nc" id="L265">                    }</span>
 
-<span class="nc" id="L267">                } catch (SQLException e) {</span>
-<span class="nc" id="L268">                    logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+                }
+<span class="nc" id="L268">                break;</span>
+            case 3:
+<span class="nc" id="L270">                sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID Order by Price asc&quot;;</span>
+                try {
+<span class="nc" id="L272">                    ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L273">                    rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">                    while (rs.next()) {</span>
+<span class="nc" id="L275">                        Product p = new Product();</span>
+<span class="nc" id="L276">                        p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
+<span class="nc" id="L277">                        p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
+<span class="nc" id="L278">                        p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="nc" id="L279">                        p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
+<span class="nc" id="L280">                        p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
+<span class="nc" id="L281">                        p.setImg(rs.getString(&quot;Image&quot;));</span>
+<span class="nc" id="L282">                        p.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="nc" id="L283">                        Category c = new Category();</span>
+<span class="nc" id="L284">                        c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
+<span class="nc" id="L285">                        c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
+<span class="nc" id="L286">                        p.setCategory(c);</span>
+<span class="nc" id="L287">                        list.add(p);</span>
+<span class="nc" id="L288">                    }</span>
+
+<span class="nc" id="L290">                } catch (SQLException e) {</span>
+<span class="nc" id="L291">                    logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 
                 } finally {
                     try {
-<span class="nc bnc" id="L272" title="All 2 branches missed.">                        if (rs != null) {</span>
-<span class="nc" id="L273">                            rs.close();</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">                        if (rs != null) {</span>
+<span class="nc" id="L296">                            rs.close();</span>
                         }
-<span class="nc bnc" id="L275" title="All 2 branches missed.">                        if (ps != null) {</span>
-<span class="nc" id="L276">                            ps.close();</span>
+<span class="nc bnc" id="L298" title="All 2 branches missed.">                        if (ps != null) {</span>
+<span class="nc" id="L299">                            ps.close();</span>
                         }
-<span class="nc" id="L278">                    } catch (SQLException e) {</span>
-<span class="nc" id="L279">                        logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="nc" id="L280">                    }</span>
-
-                }
-<span class="nc" id="L283">                break;</span>
-            case 3:
-<span class="nc" id="L285">                sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID Order by Price asc&quot;;</span>
-                try {
-<span class="nc" id="L287">                    ps = con.prepareStatement(sql);</span>
-<span class="nc" id="L288">                    rs = ps.executeQuery();</span>
-<span class="nc bnc" id="L289" title="All 2 branches missed.">                    while (rs.next()) {</span>
-<span class="nc" id="L290">                        Product p = new Product();</span>
-<span class="nc" id="L291">                        p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
-<span class="nc" id="L292">                        p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
-<span class="nc" id="L293">                        p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
-<span class="nc" id="L294">                        p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
-<span class="nc" id="L295">                        p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
-<span class="nc" id="L296">                        p.setImg(rs.getString(&quot;Image&quot;));</span>
-<span class="nc" id="L297">                        p.setDescription(rs.getString(&quot;Description&quot;));</span>
-<span class="nc" id="L298">                        Category c = new Category();</span>
-<span class="nc" id="L299">                        c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
-<span class="nc" id="L300">                        c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
-<span class="nc" id="L301">                        p.setCategory(c);</span>
-<span class="nc" id="L302">                        list.add(p);</span>
+<span class="nc" id="L301">                    } catch (SQLException e) {</span>
+<span class="nc" id="L302">                        logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 <span class="nc" id="L303">                    }</span>
 
-<span class="nc" id="L305">                } catch (SQLException e) {</span>
-<span class="nc" id="L306">                    logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-
-                } finally {
-                    try {
-<span class="nc bnc" id="L310" title="All 2 branches missed.">                        if (rs != null) {</span>
-<span class="nc" id="L311">                            rs.close();</span>
-                        }
-<span class="nc bnc" id="L313" title="All 2 branches missed.">                        if (ps != null) {</span>
-<span class="nc" id="L314">                            ps.close();</span>
-                        }
-<span class="nc" id="L316">                    } catch (SQLException e) {</span>
-<span class="nc" id="L317">                        logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="nc" id="L318">                    }</span>
-
                 }
-<span class="nc" id="L321">                break;</span>
+<span class="nc" id="L306">                break;</span>
 
             case 4:
-<span class="nc" id="L324">                sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID Order by Price desc&quot;;</span>
+<span class="nc" id="L309">                sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID Order by Price desc&quot;;</span>
                 try {
-<span class="nc" id="L326">                    ps = con.prepareStatement(sql);</span>
-<span class="nc" id="L327">                    rs = ps.executeQuery();</span>
-<span class="nc bnc" id="L328" title="All 2 branches missed.">                    while (rs.next()) {</span>
-<span class="nc" id="L329">                        Product p = new Product();</span>
-<span class="nc" id="L330">                        p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
-<span class="nc" id="L331">                        p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
-<span class="nc" id="L332">                        p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
-<span class="nc" id="L333">                        p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
-<span class="nc" id="L334">                        p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
-<span class="nc" id="L335">                        p.setImg(rs.getString(&quot;Image&quot;));</span>
-<span class="nc" id="L336">                        p.setDescription(rs.getString(&quot;Description&quot;));</span>
-<span class="nc" id="L337">                        Category c = new Category();</span>
-<span class="nc" id="L338">                        c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
-<span class="nc" id="L339">                        c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
-<span class="nc" id="L340">                        p.setCategory(c);</span>
-<span class="nc" id="L341">                        list.add(p);</span>
-<span class="nc" id="L342">                    }</span>
+<span class="nc" id="L311">                    ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L312">                    rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">                    while (rs.next()) {</span>
+<span class="nc" id="L314">                        Product p = new Product();</span>
+<span class="nc" id="L315">                        p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
+<span class="nc" id="L316">                        p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
+<span class="nc" id="L317">                        p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="nc" id="L318">                        p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
+<span class="nc" id="L319">                        p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
+<span class="nc" id="L320">                        p.setImg(rs.getString(&quot;Image&quot;));</span>
+<span class="nc" id="L321">                        p.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="nc" id="L322">                        Category c = new Category();</span>
+<span class="nc" id="L323">                        c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
+<span class="nc" id="L324">                        c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
+<span class="nc" id="L325">                        p.setCategory(c);</span>
+<span class="nc" id="L326">                        list.add(p);</span>
+<span class="nc" id="L327">                    }</span>
 
-<span class="nc" id="L344">                } catch (SQLException e) {</span>
-<span class="nc" id="L345">                    logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L329">                } catch (SQLException e) {</span>
+<span class="nc" id="L330">                    logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 
                 } finally {
                     try {
-<span class="nc bnc" id="L349" title="All 2 branches missed.">                        if (rs != null) {</span>
-<span class="nc" id="L350">                            rs.close();</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">                        if (rs != null) {</span>
+<span class="nc" id="L335">                            rs.close();</span>
                         }
-<span class="nc bnc" id="L352" title="All 2 branches missed.">                        if (ps != null) {</span>
-<span class="nc" id="L353">                            ps.close();</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">                        if (ps != null) {</span>
+<span class="nc" id="L338">                            ps.close();</span>
                         }
-<span class="nc" id="L355">                    } catch (SQLException e) {</span>
-<span class="nc" id="L356">                        logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="nc" id="L357">                    }</span>
+<span class="nc" id="L340">                    } catch (SQLException e) {</span>
+<span class="nc" id="L341">                        logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="nc" id="L342">                    }</span>
 
                 }
 
-<span class="nc" id="L361">                break;</span>
+<span class="nc" id="L346">                break;</span>
 
             default:
-<span class="nc" id="L364">                logger.log(Level.SEVERE, &quot;incorrect input&quot;);</span>
+<span class="nc" id="L349">                logger.log(Level.SEVERE, &quot;incorrect input&quot;);</span>
                 break;
         }
 
-<span class="nc" id="L368">        return list;</span>
+<span class="nc" id="L353">        return list;</span>
     }
 
     public List&lt;Product&gt; searchProductByName(String key) {
-<span class="nc" id="L372">        List&lt;Product&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L357">        List&lt;Product&gt; list = new ArrayList&lt;&gt;();</span>
 
-<span class="nc" id="L374">        String sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductName like N'%&quot; + key + &quot;%'&quot;;</span>
-<span class="nc" id="L375">        PreparedStatement ps = null;</span>
-<span class="nc" id="L376">        ResultSet rs = null;</span>
+<span class="nc" id="L359">        sql = &quot;select * from Product p inner join Category c ON p.CategoryID = c.CategoryID where ProductName like N'%&quot; + key + &quot;%'&quot;;</span>
+<span class="nc" id="L360">        PreparedStatement ps = null;</span>
+<span class="nc" id="L361">        ResultSet rs = null;</span>
         try {
-<span class="nc" id="L378">            ps = con.prepareStatement(sql);</span>
-<span class="nc" id="L379">            rs = ps.executeQuery();</span>
-<span class="nc bnc" id="L380" title="All 2 branches missed.">            while (rs.next()) {</span>
-<span class="nc" id="L381">                Product p = new Product();</span>
-<span class="nc" id="L382">                p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
-<span class="nc" id="L383">                p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
-<span class="nc" id="L384">                p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
-<span class="nc" id="L385">                p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
-<span class="nc" id="L386">                p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
-<span class="nc" id="L387">                p.setImg(rs.getString(&quot;Image&quot;));</span>
-<span class="nc" id="L388">                p.setDescription(rs.getString(&quot;Description&quot;));</span>
-<span class="nc" id="L389">                Category c = new Category();</span>
-<span class="nc" id="L390">                c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
-<span class="nc" id="L391">                c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
-<span class="nc" id="L392">                p.setCategory(c);</span>
-<span class="nc" id="L393">                list.add(p);</span>
+<span class="nc" id="L363">            ps = con.prepareStatement(sql);</span>
+<span class="nc" id="L364">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L365" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L366">                Product p = new Product();</span>
+<span class="nc" id="L367">                p.setProductId(rs.getInt(&quot;ProductID&quot;));</span>
+<span class="nc" id="L368">                p.setProductName(rs.getString(&quot;ProductName&quot;));</span>
+<span class="nc" id="L369">                p.setQuantity(rs.getInt(&quot;Quantity&quot;));</span>
+<span class="nc" id="L370">                p.setSale(rs.getDouble(&quot;Sale&quot;));</span>
+<span class="nc" id="L371">                p.setPrice(rs.getDouble(&quot;Price&quot;));</span>
+<span class="nc" id="L372">                p.setImg(rs.getString(&quot;Image&quot;));</span>
+<span class="nc" id="L373">                p.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="nc" id="L374">                Category c = new Category();</span>
+<span class="nc" id="L375">                c.setCategoryId(rs.getInt(&quot;CategoryID&quot;));</span>
+<span class="nc" id="L376">                c.setCategoryName(rs.getString(&quot;CategoryName&quot;));</span>
+<span class="nc" id="L377">                p.setCategory(c);</span>
+<span class="nc" id="L378">                list.add(p);</span>
+<span class="nc" id="L379">            }</span>
+
+<span class="nc" id="L381">        } catch (SQLException e) {</span>
+<span class="nc" id="L382">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+
+        } finally {
+            try {
+<span class="nc bnc" id="L386" title="All 2 branches missed.">                if (rs != null) {</span>
+<span class="nc" id="L387">                    rs.close();</span>
+                }
+<span class="nc bnc" id="L389" title="All 2 branches missed.">                if (ps != null) {</span>
+<span class="nc" id="L390">                    ps.close();</span>
+                }
+<span class="nc" id="L392">            } catch (SQLException e) {</span>
+<span class="nc" id="L393">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 <span class="nc" id="L394">            }</span>
 
-<span class="nc" id="L396">        } catch (SQLException e) {</span>
-<span class="nc" id="L397">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-
-        } finally {
-            try {
-<span class="nc bnc" id="L401" title="All 2 branches missed.">                if (rs != null) {</span>
-<span class="nc" id="L402">                    rs.close();</span>
-                }
-<span class="nc bnc" id="L404" title="All 2 branches missed.">                if (ps != null) {</span>
-<span class="nc" id="L405">                    ps.close();</span>
-                }
-<span class="nc" id="L407">            } catch (SQLException e) {</span>
-<span class="nc" id="L408">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="nc" id="L409">            }</span>
-
         }
 
-<span class="nc" id="L413">        return list;</span>
+<span class="nc" id="L398">        return list;</span>
     }
 
-    public boolean insertProduct(Product p) throws Exception {
-<span class="fc" id="L417">        String sql = &quot;INSERT INTO Product (ProductName, CategoryID, Price, Image, Quantity, Sale) VALUES (?, ?, ?, ?, ?, ?)&quot;;</span>
-<span class="fc" id="L418">        PreparedStatement ps = null;</span>
+    public boolean insertProduct(Product p)  {
+<span class="fc" id="L402">        sql = &quot;INSERT INTO Product (ProductName, CategoryID, Price, Image, Quantity, Sale) VALUES (?, ?, ?, ?, ?, ?)&quot;;</span>
 
-        try {
-<span class="fc" id="L421">            ps = con.prepareStatement(sql);</span>
-<span class="fc" id="L422">            ps.setString(1, p.getProductName());</span>
-<span class="fc" id="L423">            ps.setInt(2, p.getCategory().getCategoryId());</span>
-<span class="fc" id="L424">            ps.setDouble(3, p.getPrice());</span>
-<span class="fc" id="L425">            ps.setString(4, p.getImg());</span>
-<span class="fc" id="L426">            ps.setInt(5, p.getQuantity());</span>
-<span class="fc" id="L427">            ps.setDouble(6, p.getSale());</span>
-<span class="fc" id="L428">            ps.executeUpdate();</span>
-<span class="fc" id="L429">            return true;</span>
-<span class="nc" id="L430">        } catch (SQLException e) {</span>
-<span class="nc" id="L431">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="fc" id="L404">        int check = 0;</span>
+<span class="fc" id="L405">        try (Connection connection = DBContextTest.getConnection() ;PreparedStatement ps = connection.prepareStatement(sql)) {</span>
+<span class="fc" id="L406">            ps.setString(1, p.getProductName());</span>
+<span class="fc" id="L407">            ps.setInt(2, p.getCategory().getCategoryId());</span>
+<span class="fc" id="L408">            ps.setDouble(3, p.getPrice());</span>
+<span class="fc" id="L409">            ps.setString(4, p.getImg());</span>
+<span class="fc" id="L410">            ps.setInt(5, p.getQuantity());</span>
+<span class="fc" id="L411">            ps.setDouble(6, p.getSale());</span>
+<span class="fc" id="L412">            check = ps.executeUpdate();</span>
+<span class="fc" id="L413">        } catch (SQLException | ClassNotFoundException e) {</span>
+<span class="fc" id="L414">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 
-        } finally {
-            try {
-
-<span class="pc bpc" id="L436" title="1 of 2 branches missed.">                if (ps != null) {</span>
-<span class="fc" id="L437">                    ps.close();</span>
-                }
-<span class="nc" id="L439">            } catch (SQLException e) {</span>
-<span class="nc" id="L440">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="fc" id="L441">            }</span>
-
-        }
-
-<span class="nc" id="L445">        return false;</span>
+<span class="fc" id="L416">        }</span>
+<span class="fc bfc" id="L417" title="All 2 branches covered.">        return check &gt; 0;</span>
     }
 
-    public boolean updateProduct(Product p) throws SQLException {
-<span class="fc" id="L449">        String sql = &quot;Update Product SET ProductName = ?, Quantity = ?, Sale = ?, Price = ?, Image = ? where ProductID = ? &quot;;</span>
-<span class="fc" id="L450">        PreparedStatement ps = null;</span>
-<span class="fc" id="L451">        ResultSet rs = null;</span>
-        try {
-<span class="fc" id="L453">            ps = con.prepareStatement(sql);</span>
-<span class="fc" id="L454">            ps.setString(1, p.getProductName());</span>
-<span class="fc" id="L455">            ps.setInt(2, p.getQuantity());</span>
-<span class="fc" id="L456">            ps.setDouble(3, p.getSale());</span>
-<span class="fc" id="L457">            ps.setDouble(4, p.getPrice());</span>
-<span class="fc" id="L458">            ps.setString(5, p.getImg());</span>
-<span class="fc" id="L459">            ps.setInt(6, p.getProductId());</span>
-<span class="fc" id="L460">            ps.executeUpdate();</span>
+    public boolean updateProduct(Product p) {
+<span class="fc" id="L421">        sql = &quot;Update Product SET ProductName = ?, Quantity = ?, Sale = ?, Price = ?, Image = ? where ProductID = ? &quot;;</span>
 
-<span class="fc" id="L462">            return true;</span>
-<span class="nc" id="L463">        } catch (SQLException e) {</span>
-<span class="nc" id="L464">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="fc" id="L423">        int check = 0;</span>
+<span class="fc" id="L424">        try (Connection connection = DBContextTest.getConnection() ;PreparedStatement ps = connection.prepareStatement(sql)) {</span>
+<span class="fc" id="L425">            ps.setString(1, p.getProductName());</span>
+<span class="fc" id="L426">            ps.setInt(2, p.getQuantity());</span>
+<span class="fc" id="L427">            ps.setDouble(3, p.getSale());</span>
+<span class="fc" id="L428">            ps.setDouble(4, p.getPrice());</span>
+<span class="fc" id="L429">            ps.setString(5, p.getImg());</span>
+<span class="fc" id="L430">            ps.setInt(6, p.getProductId());</span>
+<span class="fc" id="L431">            check = ps.executeUpdate();</span>
+<span class="fc" id="L432">        } catch (SQLException | ClassNotFoundException e) {</span>
+<span class="fc" id="L433">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
 
-        } finally {
-            try {
-<span class="pc bpc" id="L468" title="1 of 2 branches missed.">                if (rs != null) {</span>
-<span class="nc" id="L469">                    rs.close();</span>
-                }
-<span class="pc bpc" id="L471" title="1 of 2 branches missed.">                if (ps != null) {</span>
-<span class="fc" id="L472">                    ps.close();</span>
-                }
-<span class="nc" id="L474">            } catch (SQLException e) {</span>
-<span class="nc" id="L475">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="fc" id="L476">            }</span>
+<span class="fc" id="L435">        }</span>
 
-        }
-
-<span class="nc" id="L480">        return false;</span>
+<span class="fc bfc" id="L437" title="All 2 branches covered.">        return check &gt; 0;</span>
     }
 
     public boolean deleteProductById(int id) {
-<span class="fc" id="L484">        PreparedStatement ps = null;</span>
-<span class="fc" id="L485">        int check = 0;</span>
-        try {
-<span class="fc" id="L487">            String sql3 = &quot;Delete Product where ProductID = ?&quot;;</span>
-<span class="fc" id="L488">            PreparedStatement ps3 = con.prepareStatement(sql3);</span>
-<span class="fc" id="L489">            ps3.setInt(1, id);</span>
-<span class="fc" id="L490">            check = ps3.executeUpdate();</span>
-<span class="nc" id="L491">        } catch (SQLException e) {</span>
-<span class="nc" id="L492">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="nc" id="L493">            return false;</span>
+<span class="fc" id="L441">        sql = &quot;Delete Product where ProductID = ?&quot;;</span>
 
-        } finally {
-            try {
-
-<span class="pc bpc" id="L498" title="1 of 2 branches missed.">                if (ps != null) {</span>
-<span class="nc" id="L499">                    ps.close();</span>
-                }
-<span class="nc" id="L501">            } catch (SQLException e) {</span>
-<span class="nc" id="L502">                logger.log(Level.SEVERE, &quot;&quot;, e);</span>
-<span class="fc" id="L503">            }</span>
-
-        }
-<span class="pc bpc" id="L506" title="1 of 2 branches missed.">        return check &gt;= 0;</span>
+<span class="fc" id="L443">        int check = 0;</span>
+<span class="fc" id="L444">        try (Connection connection = DBContextTest.getConnection() ;PreparedStatement ps = connection.prepareStatement(sql)) {</span>
+<span class="fc" id="L445">            ps.setInt(1, id);</span>
+<span class="fc" id="L446">            check = ps.executeUpdate();</span>
+<span class="fc" id="L447">        } catch (SQLException| ClassNotFoundException e) {</span>
+<span class="fc" id="L448">            logger.log(Level.SEVERE, &quot;&quot;, e);</span>
+<span class="fc" id="L449">            return false;</span>
+<span class="fc" id="L450">        }</span>
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">        return check &gt;= 0;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

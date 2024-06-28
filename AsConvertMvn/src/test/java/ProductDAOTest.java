@@ -3,18 +3,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
  */
 
+import com.mycompany.asconvertmvn.dal.DBContextTest;
 import com.mycompany.asconvertmvn.dal.ProductDAO;
 import com.mycompany.asconvertmvn.model.Category;
 import com.mycompany.asconvertmvn.model.Product;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -37,24 +42,29 @@ public class ProductDAOTest {
     public ProductDAOTest() {
     }
 
-    public String[][] getDataTest(String filePath) throws Exception {
+    public String[][] getDataTest(String filePath) {
         Path path = Paths.get(filePath);
-        byte[] bytes = Files.readAllBytes(path);
+        byte[] bytes = null;
+        try {
+            bytes = Files.readAllBytes(path);
+        } catch (IOException ex) {
+            Logger.getLogger(ProductDAOTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         String dataString = new String(bytes);
         String rowsString[] = dataString.split("#");
         int numOfRows = rowsString.length;
-        String data[][] = new String[numOfRows][8];
+        String data[][] = new String[numOfRows][9];
         for (int i = 0; i < numOfRows; i++) {
             String temp = rowsString[i];
             String rows[] = temp.split("-");
-            for (int j = 0; j < 8; j++) {
+            for (int j = 0; j < 9; j++) {
                 data[i][j] = rows[j];
             }
         }
         return data;
     }
 
-    public List<Product> getProductTestList(String[][] exResult) throws Exception {
+    public List<Product> getProductTestList(String[][] exResult) {
         int numberOfRows = exResult.length;
         int numberOfCols = exResult[0].length;
         List<Product> list = new ArrayList<>();
@@ -75,7 +85,7 @@ public class ProductDAOTest {
         return list;
     }
 
-    public boolean checkEqualsProduct(String[] exResult, Product product) throws Exception {
+    public boolean checkEqualsProduct(String[] exResult, Product product) {
         String id = exResult[0];
         if (!id.equals(product.getProductId() + "")) {
             return false;
@@ -115,46 +125,67 @@ public class ProductDAOTest {
         }
         int le = list1.size();
         for (int i = 0; i < le; i++) {
-            if(!equalsProduct(list1.get(i), list2.get(i))) return false;
+            if (!equalsProduct(list1.get(i), list2.get(i))) {
+                return false;
+            }
         }
         return true;
     }
-    public boolean equalsProduct(Product p1, Product p2){
-        if(p1.getProductId()!=p2.getProductId()) return false;
-        if(!p1.getProductName().equals(p2.getProductName())) return false;
-        if(p1.getCategory().getCategoryId()!=p2.getCategory().getCategoryId()) return false;
-        if(p1.getQuantity()!=p2.getQuantity()) return false;
-        if(p1.getSale()!= p2.getSale()) return false;
-        if(p1.getPrice()!=p2.getPrice()) return false;
-        if(!p1.getImg().equals(p2.getImg())) return false;
-        if(p1.getDescription().equals(p2.getDescription())) return false;
+
+    public boolean equalsProduct(Product p1, Product p2) {
+        if (p1.getProductId() != p2.getProductId()) {
+            return false;
+        }
+        if (!p1.getProductName().equals(p2.getProductName())) {
+            return false;
+        }
+        if (p1.getCategory().getCategoryId() != p2.getCategory().getCategoryId()) {
+            return false;
+        }
+        if (p1.getQuantity() != p2.getQuantity()) {
+            return false;
+        }
+        if (p1.getSale() != p2.getSale()) {
+            return false;
+        }
+        if (p1.getPrice() != p2.getPrice()) {
+            return false;
+        }
+        if (!p1.getImg().equals(p2.getImg())) {
+            return false;
+        }
+        if (p1.getDescription().equals(p2.getDescription())) {
+            return false;
+        }
         return true;
     }
 
     @Test
-    public void testGetProductById() throws Exception {
+    public void testGetProductById() {
         productDAO = new ProductDAO();
         String[][] data = getDataTest("C:/FU-Learning/Su24/SWT301/dataFun1.txt");
         int numRows = data.length;
         int numCols = data[0].length;
-        for (int i = 0; i < 2; i++) {
-            try {
-                int id = Integer.parseInt(data[i][0]);
-                Product product = productDAO.getProductById(id);
+        for (int i = 0; i < numRows; i++) {
+
+            int id = Integer.parseInt(data[i][0]);
+            Product product = new Product();
+            if (data[i][8].equals("1")) {
+                DBContextTest.password = "12345678";
+                product = productDAO.getProductById(id);
                 Assert.assertEquals(true, checkEqualsProduct(data[i], product));
-            } catch (SQLException | ClassNotFoundException e) {
+            } else {
+                System.out.println("Di qua day");
+                DBContextTest.password = "1234567";
+                product = productDAO.getProductById(id);
                 Assert.assertEquals(true, true);
             }
 
         }
-
     }
 
-    
-
     @Test
-    public void testUpdateProduct() throws Exception {
-
+    public void testUpdateProduct() {
         productDAO = new ProductDAO();
         String[][] data = getDataTest("C:/FU-Learning/Su24/SWT301/dataFun2.txt");
         int numRows = data.length;
@@ -164,11 +195,20 @@ public class ProductDAOTest {
         for (Product product : list) {
             String eRString = data[s][7];
             boolean eR = eRString.equals("1");
-            boolean check = productDAO.updateProduct(product);
-            Assert.assertEquals(eR, check);
+            boolean check = true;
+
+            if (data[s][8].equals("1")) {
+                DBContextTest.password = "12345678";
+                check = productDAO.updateProduct(product);
+                Assert.assertEquals(eR, check);
+            } else {
+                DBContextTest.password = "1234567";
+                check = productDAO.updateProduct(product);
+            }
             s++;
         }
     }
+
     @Test
     public void testDeleteProduct() throws Exception {
         productDAO = new ProductDAO();
@@ -177,21 +217,40 @@ public class ProductDAOTest {
         int numCols = data[0].length;
         List<Product> list = getProductTestList(data);
         int s = 0;
+
         for (Product product : list) {
-            boolean check = productDAO.deleteProductById(product.getProductId());
-            Assert.assertEquals(true, check);
+            if (data[s][8].equals("1")) {
+                DBContextTest.password = "12345678";
+                boolean check = productDAO.deleteProductById(product.getProductId());
+                Assert.assertEquals(true, check);
+            } else {
+                DBContextTest.password = "1234567";
+                boolean check = productDAO.deleteProductById(product.getProductId());
+                Assert.assertEquals(false, check);
+            }
             s++;
         }
     }
 
     @Test
-    public void testInsertProduct() throws Exception {
+    public void testInsertProduct() {
         productDAO = new ProductDAO();
         String[][] data = getDataTest("C:/FU-Learning/Su24/SWT301/dataFun3.txt");
         List<Product> list = getProductTestList(data);
+        DBContextTest.password = "12345678";
+        int s = 0;
         for (Product product : list) {
-            boolean check = productDAO.insertProduct(product);
-            Assert.assertEquals(true, check);
+
+            if (data[s][8].equals("1")) {
+                DBContextTest.password = "12345678";
+                boolean check = productDAO.insertProduct(product);
+                Assert.assertEquals(true, check);
+            } else {
+                DBContextTest.password = "1234567";
+                boolean check = productDAO.insertProduct(product);
+                Assert.assertEquals(false, check);
+            }
+            s++;
         }
     }
 }

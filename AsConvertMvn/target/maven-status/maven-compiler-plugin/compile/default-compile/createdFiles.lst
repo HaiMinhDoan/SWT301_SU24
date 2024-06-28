@@ -1,5 +1,6 @@
 com\mycompany\asconvertmvn\model\Item.class
 com\mycompany\asconvertmvn\model\Product$ProductBuilder.class
+com\mycompany\asconvertmvn\dal\DBContextTest.class
 com\mycompany\asconvertmvn\model\Order.class
 com\mycompany\asconvertmvn\dal\OrderDAO.class
 com\mycompany\asconvertmvn\model\Category.class
